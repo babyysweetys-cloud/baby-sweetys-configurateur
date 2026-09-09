@@ -100,7 +100,7 @@ renderThreads();renderClips();renderRealBeads('rounds12','round12',realRounds,'c
       window.parent.postMessage({
         type:'baby-sweetys-preview',
         chainHTML:chain.innerHTML,
-        lengthText:len.textContent + ' · Longueur finale jusqu’à 22 cm', thread:state.threadColor?state.threadColor[0]:'À choisir'
+        lengthText:len.textContent, totalText:'22 cm max (17 cm + boucle 5 cm)', thread:state.threadColor?state.threadColor[0]:'À choisir'
       },'*');
     }catch(e){}
   }
