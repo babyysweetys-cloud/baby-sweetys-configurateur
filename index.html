@@ -35,4 +35,40 @@ function validateCreation(){if(!state.sequence.length){alert("Ajoute au moins un
 async function copyCreationCode(){if(!window.currentCreationCode)return;try{await navigator.clipboard.writeText(window.currentCreationCode);document.getElementById('copyOk').textContent='✓ Code copié !'}catch(e){const ta=document.createElement('textarea');ta.value=window.currentCreationCode;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();document.getElementById('copyOk').textContent='✓ Code copié !'}}
 
 renderClips();renderRealBeads('rounds12','round12',realRounds,'circle');renderRealBeads('rounds14','round14',realRounds,'circle');renderRealBeads('hexes','hex',realHexes,'hex');renderTiny('lentilles','lentille');renderTiny('pois','pois');renderMotifs();render();window.addEventListener('resize',render);
-</script></body></html>
+</script>
+<script>
+(function(){
+  const preview=document.querySelector('.preview');
+  const app=document.querySelector('.app');
+  if(!preview||!app)return;
+  const originalParent=preview.parentNode;
+  const spacer=document.createElement('div');
+  spacer.style.display='none';
+  function applyOuterScroll(scrollY, iframeTop){
+    const top=Math.max(0, scrollY-iframeTop+8);
+    const max=Math.max(0, document.documentElement.scrollHeight-preview.offsetHeight-20);
+    const y=Math.min(top,max);
+    if(y>0){
+      if(!spacer.parentNode){spacer.style.height=preview.offsetHeight+'px';spacer.style.display='block';preview.parentNode.insertBefore(spacer,preview)}
+      preview.style.position='relative';
+      preview.style.top=y+'px';
+      preview.style.zIndex='999';
+    }else{
+      preview.style.position='sticky';
+      preview.style.top='8px';
+      if(spacer.parentNode)spacer.remove();
+    }
+  }
+  window.addEventListener('message',e=>{
+    if(e.data&&e.data.type==='baby-sweetys-scroll') applyOuterScroll(Number(e.data.scrollY)||0,Number(e.data.iframeTop)||0);
+  });
+  try{
+    if(window.parent!==window && window.parent.location.origin===location.origin){
+      const frame=window.frameElement;
+      const fn=()=>applyOuterScroll(window.parent.scrollY,frame.getBoundingClientRect().top+window.parent.scrollY);
+      window.parent.addEventListener('scroll',fn,{passive:true}); fn();
+    }
+  }catch(e){}
+})();
+</script>
+</body></html>
