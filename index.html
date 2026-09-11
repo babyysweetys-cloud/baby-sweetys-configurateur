@@ -148,19 +148,21 @@ function toggleMoveSelected(){
  moveMode=!moveMode;
  updateEditBar();
 }
-function sequenceLettersRuleOK(seq){
+function countForbiddenBetweenLetters(seq){
+  let count=0;
   const letterIndexes=[];
   seq.forEach((it,i)=>{ if(it.type==='letter') letterIndexes.push(i); });
+
   for(let n=0;n<letterIndexes.length-1;n++){
     const a=letterIndexes[n], b=letterIndexes[n+1];
     for(let i=a+1;i<b;i++){
       const t=seq[i].type;
       if(t!=='lentille' && t!=='pois'){
-        return false;
+        count++;
       }
     }
   }
-  return true;
+  return count;
 }
 function moveSelectedBefore(target){
  if(selectedEdit===null||!moveMode||target<0||target>=state.sequence.length)return;
@@ -174,7 +176,9 @@ function moveSelectedBefore(target){
  dest=Math.max(0,dest);
  testSeq.splice(dest,0,item);
 
- if(!sequenceLettersRuleOK(testSeq)){
+ const beforeForbidden=countForbiddenBetweenLetters(state.sequence);
+ const afterForbidden=countForbiddenBetweenLetters(testSeq);
+ if(afterForbidden>beforeForbidden){
    alert("Entre deux lettres, seules les lentilles et les perles à pois sont autorisées.");
    moveMode=false;
    render();
@@ -193,8 +197,10 @@ function moveSelectedEnd(){
  const item=testSeq.splice(selectedEdit,1)[0];
  testSeq.push(item);
 
- if(!sequenceLettersRuleOK(testSeq)){
-   alert("Ce déplacement laisserait une perle non autorisée entre deux lettres. Entre deux lettres, seules les lentilles et les perles à pois sont autorisées.");
+ const beforeForbidden=countForbiddenBetweenLetters(state.sequence);
+ const afterForbidden=countForbiddenBetweenLetters(testSeq);
+ if(afterForbidden>beforeForbidden){
+   alert("Ce déplacement placerait une perle non autorisée entre deux lettres. Entre deux lettres, seules les lentilles et les perles à pois sont autorisées.");
    moveMode=false;
    render();
    return;
