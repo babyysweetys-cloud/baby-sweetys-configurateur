@@ -148,23 +148,60 @@ function toggleMoveSelected(){
  moveMode=!moveMode;
  updateEditBar();
 }
+function sequenceLettersRuleOK(seq){
+  const letterIndexes=[];
+  seq.forEach((it,i)=>{ if(it.type==='letter') letterIndexes.push(i); });
+  for(let n=0;n<letterIndexes.length-1;n++){
+    const a=letterIndexes[n], b=letterIndexes[n+1];
+    for(let i=a+1;i<b;i++){
+      const t=seq[i].type;
+      if(t!=='lentille' && t!=='pois'){
+        return false;
+      }
+    }
+  }
+  return true;
+}
 function moveSelectedBefore(target){
  if(selectedEdit===null||!moveMode||target<0||target>=state.sequence.length)return;
  if(target===selectedEdit){moveMode=false;updateEditBar();return}
- saveHistory();
+
  const from=selectedEdit;
- const item=state.sequence.splice(from,1)[0];
+ const testSeq=state.sequence.map(x=>({...x}));
+ const item=testSeq.splice(from,1)[0];
  let dest=target;
  if(from<target)dest--;
- state.sequence.splice(Math.max(0,dest),0,item);
+ dest=Math.max(0,dest);
+ testSeq.splice(dest,0,item);
+
+ if(!sequenceLettersRuleOK(testSeq)){
+   alert("Entre deux lettres, seules les lentilles et les perles à pois sont autorisées.");
+   moveMode=false;
+   updateEditBar();
+   return;
+ }
+
+ saveHistory();
+ state.sequence=testSeq;
  selectedEdit=dest;moveMode=false;state.insertAt=null;
  syncNameAfterEdit();render();
 }
 function moveSelectedEnd(){
  if(selectedEdit===null||!moveMode)return;
+
+ const testSeq=state.sequence.map(x=>({...x}));
+ const item=testSeq.splice(selectedEdit,1)[0];
+ testSeq.push(item);
+
+ if(!sequenceLettersRuleOK(testSeq)){
+   alert("Ce déplacement laisserait une perle non autorisée entre deux lettres. Entre deux lettres, seules les lentilles et les perles à pois sont autorisées.");
+   moveMode=false;
+   updateEditBar();
+   return;
+ }
+
  saveHistory();
- const item=state.sequence.splice(selectedEdit,1)[0];
- state.sequence.push(item);
+ state.sequence=testSeq;
  selectedEdit=state.sequence.length-1;moveMode=false;state.insertAt=null;
  syncNameAfterEdit();render();
 }
