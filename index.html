@@ -268,7 +268,9 @@ renderThreads();renderClips();renderRealBeads('rounds12','round12',realRounds,'c
         title:'♡ Ta création en direct',
         chainHTML:chain.innerHTML,
         lengthText:len.textContent, totalText:'22 cm max (17 cm + boucle 5 cm)', thread:state.threadColor?state.threadColor[0]:'À choisir',
-        insertAt:state.insertAt
+        insertAt:state.insertAt,
+        selectedEdit:selectedEdit,
+        moveMode:moveMode
       },'*');
     }catch(e){}
   }
