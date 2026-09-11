@@ -59,13 +59,30 @@ function usedLength(){return state.sequence.reduce((a,it)=>a+itemLength(it),0)}
 function saveHistory(){state.history.push({sequence:state.sequence.map(x=>({...x})),name:state.name,insertAt:state.insertAt});if(state.history.length>50)state.history.shift()}
 function canAdd(mm){if(usedLength()+mm>MAX_MM){alert(`Cet \u00e9l\u00e9ment ferait d\u00e9passer la longueur maximale de ${MAX_MM} mm (17 cm).`);return false}return true}
 function setInsertAt(index){state.insertAt=index;render()}
-function insertItems(items){const total=items.reduce((a,it)=>a+itemLength(it),0);if(!canAdd(total))return false;saveHistory();const pos=state.insertAt===null?state.sequence.length:state.insertAt;state.sequence.splice(pos,0,...items.map(mk));if(state.insertAt!==null)state.insertAt=pos+items.length;return true}
-function addItem(it){
-if(state.sequence.length===0 && it.type!=='round12' && it.type!=='round14' && it.type!=='hex'){
-  alert("Pour respecter la règle de sécurité, la première perle après le clip doit être une perle ronde 12 mm, ronde 14 mm ou hexagonale 14 mm.");
-  return;
+function insertItems(items,useInsertPoint=true){
+  const total=items.reduce((a,it)=>a+itemLength(it),0);
+  if(!canAdd(total))return false;
+  saveHistory();
+
+  const canInsertHere = useInsertPoint && state.insertAt!==null;
+  const pos = canInsertHere ? state.insertAt : state.sequence.length;
+
+  state.sequence.splice(pos,0,...items.map(mk));
+
+  if(canInsertHere) state.insertAt=pos+items.length;
+  return true;
 }
-if(insertItems([it]))render()
+function addItem(it){
+  if(state.sequence.length===0 && it.type!=='round12' && it.type!=='round14' && it.type!=='hex'){
+    alert("Pour respecter la règle de sécurité, la première perle après le clip doit être une perle ronde 12 mm, ronde 14 mm ou hexagonale 14 mm.");
+    return;
+  }
+
+  // Seules les lentilles et les perles à pois peuvent utiliser
+  // l'emplacement sélectionné entre deux lettres.
+  const canGoBetweenLetters = (it.type==='lentille' || it.type==='pois');
+
+  if(insertItems([it],canGoBetweenLetters)) render();
 }
 function imgDot(src,shape='circle',color='#d8b7ad'){return src?`<div class='dot ${shape==='hex'?'hexDot':''}' style='background:#fff'><img src='${src}'></div>`:`<div class='dot ${shape==='hex'?'hexDot':''}' style='background:${color}'></div>`}
 function colorDot(c,shape='circle'){return `<div class='dot ${shape==='hex'?'hexDot':''}' style='background:${c}'></div>`}
@@ -168,7 +185,7 @@ function updateEditBar(){
  }else{
    const it=state.sequence[selectedEdit];
    if(it && it.type==='letter'){
-     text.innerHTML='✓ Lettre sélectionnée : tu peux la déplacer ou la supprimer. La prochaine lentille ou perle à pois sera ajoutée juste après cette lettre.';
+     text.innerHTML='✓ Lettre sélectionnée : tu peux la déplacer ou la supprimer. Seules les lentilles et les perles à pois peuvent être ajoutées juste après cette lettre.';
    }else{
      text.innerHTML='✓ Élément sélectionné : tu peux le déplacer ou le supprimer.';
    }
