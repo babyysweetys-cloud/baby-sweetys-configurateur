@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anneau de dentition – Baby Sweety's</title>
+<style>
+:root{--rose:#d98b98;--rose2:#fff0f3;--ink:#684744;--line:#ead9d4;--bg:#fffaf8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:var(--ink)}
+main{max-width:1180px;margin:auto;padding:18px}.hero{text-align:center;margin-bottom:18px}
+.hero h1{font-size:30px;margin:8px 0}.hero p{margin:0;color:#8e6f69}
+.builder{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,480px);gap:22px;align-items:start}
+.right{position:sticky;top:14px;align-self:start}
+.preview,.recap{background:#fff;border:1px solid var(--line);border-radius:20px;padding:14px;box-shadow:0 5px 18px #76534b10}
+.preview h2{font-size:18px;margin:0 0 10px}.stage{height:390px;position:relative;background:linear-gradient(#fff,#fff8f6);border-radius:17px;overflow:hidden}
+#ringArt{position:absolute;left:50%;top:28%;transform:translate(-50%,-50%);font-size:130px;z-index:1}
+#beads{position:absolute;inset:0;z-index:2}.bead{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px #0002;cursor:pointer}
+.bead.round{border-radius:50%}.bead.hex{clip-path:polygon(25% 6%,75% 6%,100% 50%,75% 94%,25% 94%,0 50%)}.bead.letter{background:#fff!important;border:1px solid #ddd;border-radius:7px;color:#222;font-weight:700}.bead.lens{border-radius:50%}
+.bead.selected{outline:3px solid var(--rose);outline-offset:3px}
+.meter{height:9px;background:#f0e4e1;border-radius:20px;margin-top:10px;overflow:hidden}.meter i{display:block;height:100%;background:var(--rose);width:0}
+.info{display:flex;justify-content:space-between;font-size:13px;margin-top:6px}.notice{font-size:13px;background:var(--rose2);padding:10px;border-radius:12px;margin-top:9px;line-height:1.45}
+.editbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;background:#fff5f6;border:1px solid #efc8d0;border-radius:12px;padding:8px;margin-top:9px;font-size:12px}
+.btn{border:0;border-radius:11px;padding:10px 12px;font-weight:700;cursor:pointer}.pink{background:var(--rose);color:#fff}.soft{background:#f5e9e6;color:var(--ink)}.danger{background:#fff0f2;color:#b95166}
+.ac{background:#fff;border:1px solid var(--line);border-radius:15px;margin-bottom:10px;overflow:hidden}.ah{padding:15px;font-weight:700;display:flex;justify-content:space-between;cursor:pointer}.ab{display:none;padding:0 14px 14px}.ac.open .ab{display:block}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.opt{border:1px solid var(--line);border-radius:11px;padding:7px;text-align:center;font-size:11px;cursor:pointer;background:#fff}.opt:hover,.opt.active{border-color:var(--rose);outline:1px solid var(--rose)}
+.sw{width:34px;height:34px;border-radius:50%;margin:auto auto 4px;border:1px solid #ddd}.hexsw{clip-path:polygon(25% 6%,75% 6%,100% 50%,75% 94%,25% 94%,0 50%)}
+input{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;font-size:17px}.small{font-size:12px;color:#8b6b66;margin-top:7px}.gapBox{margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:12px}.gapTitle{font-size:12px;font-weight:700;margin-bottom:6px}
+.rings{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.ringopt{font-size:37px}.final{width:100%;font-size:16px;margin-top:12px}.recap{margin-top:12px;font-size:14px;line-height:1.5}
+@media(max-width:850px){
+ .builder{grid-template-columns:1fr}
+ .right{position:sticky;top:0;z-index:30;background:var(--bg);padding-top:4px}
+ .preview{padding:8px;border-radius:0 0 16px 16px;box-shadow:0 6px 18px #0002}
+ .preview h2{font-size:14px;margin:0 0 4px}.stage{height:175px}
+ .notice,.editbar{display:none}.info{font-size:11px}.recap{display:none}
+ #ringArt{font-size:78px;top:27%}
+}
+@media(max-width:550px){main{padding:10px}.grid{grid-template-columns:repeat(4,1fr)}.rings{grid-template-columns:repeat(3,1fr)}.hero h1{font-size:24px}}
+</style></head>
+<body><main>
+<div class="hero"><h1>💕 Crée ton anneau de dentition</h1><p>Choisis d’abord ton anneau, puis compose les perles autour de l’arc.</p></div>
+
+<div class="builder">
+<div class="left">
+
+<div class="ac open"><div class="ah">1. Choisis ton anneau de dentition <span>⌄</span></div><div class="ab">
+<div class="rings">
+<div class="opt active ring-choice" onclick="chooseRing(this,'🦊','Renard')"><div class="ringopt">🦊</div>Renard</div>
+<div class="opt ring-choice" onclick="chooseRing(this,'🐨','Koala')"><div class="ringopt">🐨</div>Koala</div>
+<div class="opt ring-choice" onclick="chooseRing(this,'🐐','Chèvre')"><div class="ringopt">🐐</div>Chèvre</div>
+<div class="opt ring-choice" onclick="chooseRing(this,'🦙','Lama')"><div class="ringopt">🦙</div>Lama</div>
+</div><p class="small">Visuels provisoires pour l’instant. Tes vrais modèles seront ajoutés ensuite.</p>
+</div></div>
+
+<div class="ac"><div class="ah">2. Perles rondes 12 mm <span>⌄</span></div><div class="ab"><div id="r12" class="grid"></div></div></div>
+<div class="ac"><div class="ah">3. Perles rondes 14 mm <span>⌄</span></div><div class="ab"><div id="r14" class="grid"></div></div></div>
+<div class="ac"><div class="ah">4. Perles hexagonales 14 mm <span>⌄</span></div><div class="ab"><div id="h14" class="grid"></div></div></div>
+<div class="ac"><div class="ah">5. Lentilles 5 mm <span>⌄</span></div><div class="ab"><p class="small">Sélectionne un élément dans l’aperçu si tu veux insérer la lentille juste après.</p><div id="lens" class="grid"></div></div></div>
+
+<div class="ac"><div class="ah">6. Prénom <span>⌄</span></div><div class="ab">
+<input id="name" maxlength="7" placeholder="Prénom – 7 lettres maximum" oninput="buildGapChoices()">
+<p class="small"><b>Une lentille est obligatoire entre chaque lettre</b> pour que le prénom suive mieux la courbe et que le rendu soit plus harmonieux.</p>
+<div id="nameGaps"></div>
+<button class="btn pink" style="margin-top:10px" onclick="addName()">Ajouter le prénom à l’endroit choisi</button>
+</div></div>
+
+<button class="btn pink final" onclick="finalize()">♡ Finaliser ma création</button>
+</div>
+
+<div class="right">
+<section class="preview">
+<h2>Aperçu de ta création</h2>
+<div class="stage"><div id="ringArt">🦊</div><div id="beads"></div></div>
+<div class="meter"><i id="meter"></i></div>
+<div class="info"><span id="length">0 / 200 mm</span><span id="qty">0 élément</span></div>
+<div class="notice">♡ Maximum <b>200 mm</b>. La première et la dernière perle doivent être <b>rondes ou hexagonales</b>.<br><b>Une lentille est obligatoire entre chaque lettre du prénom.</b></div>
+<div class="notice"><b>💡 Petit conseil :</b> sur certains anneaux de dentition avec une grande ouverture, la première et la dernière perle peuvent se retrouver côte à côte une fois la création montée. Pense à choisir <b>deux couleurs différentes aux extrémités</b> si tu veux éviter que deux perles de la même couleur se touchent.</div>
+<div class="editbar">
+<span id="editText">✋ Touche un élément de l’aperçu pour le sélectionner.</span>
+<button id="moveBtn" class="btn soft" style="display:none" onclick="toggleMove()">↔ Déplacer</button>
+<button id="deleteBtn" class="btn danger" style="display:none" onclick="deleteSelected()">🗑 Supprimer</button>
+<button id="cancelBtn" class="btn soft" style="display:none" onclick="clearSelection()">✕ Annuler</button>
+<button class="btn soft" onclick="addAtEnd()">＋ Ajouter à la fin</button>
+</div>
+</section>
+<div class="recap"><b>Récapitulatif</b><div id="recap">Choisis ton anneau puis ajoute tes perles.</div></div>
+</div>
+</div>
+</main>
+
+<script>
+const colors=[['Blanc','#f5f4ef'],['Crème','#ead9bd'],['Rose','#e8a7b1'],['Vieux rose','#bd858b'],['Menthe','#8dcebd'],['Bleu ciel','#91c9e8'],['Moutarde','#d5a438'],['Terracotta','#ce7548'],['Lilas','#c6a8d8'],['Noir','#171719']];
+const mm={r12:12,r14:14,h14:14,lens:5,letter:12};
+let items=[], selected=null, moveMode=false, insertAt=null, history=[], gapColors=[], chosenRing=['🦊','Renard'];
+let uid=1;
+const total=()=>items.reduce((s,x)=>s+mm[x.type],0);
+function save(){history.push(items.map(x=>({...x})));if(history.length>50)history.shift()}
+function item(x){return {...x,uid:uid++}}
+function canAdd(v){if(total()+v>200){alert('Cet ajout ferait dépasser la limite de 200 mm.');return false}return true}
+function insertPos(){return insertAt===null?items.length:Math.max(0,Math.min(insertAt,items.length))}
+function chooseRing(el,icon,name){
+ chosenRing=[icon,name];document.getElementById('ringArt').textContent=icon;
+ document.querySelectorAll('.ring-choice').forEach(x=>x.classList.remove('active'));el.classList.add('active');render();
+}
+function add(type,c){
+ if(!canAdd(mm[type]))return;save();const p=insertPos();items.splice(p,0,item({type,color:c[1],label:c[0]}));insertAt=p+1;render();
+}
+function makePalettes(){
+ ['r12','r14','h14','lens'].forEach(type=>{
+  document.getElementById(type).innerHTML=colors.map((c,i)=>`<div class="opt" onclick="add('${type}',colors[${i}])"><div class="sw ${type==='h14'?'hexsw':''}" style="background:${c[1]};${type==='lens'?'height:11px;margin-top:11px':''}"></div>${c[0]}</div>`).join('');
+ });
+}
+function buildGapChoices(){
+ const n=document.getElementById('name').value.trim().toUpperCase().slice(0,7), count=Math.max(0,n.length-1);
+ while(gapColors.length<count)gapColors.push(2);gapColors=gapColors.slice(0,count);
+ const box=document.getElementById('nameGaps');box.innerHTML='';
+ for(let i=0;i<count;i++){
+  const d=document.createElement('div');d.className='gapBox';
+  d.innerHTML=`<div class="gapTitle">Lentille entre ${n[i]} et ${n[i+1]}</div><div class="grid">${colors.map((c,j)=>`<div class="opt ${gapColors[i]===j?'active':''}" onclick="setGap(${i},${j})"><div class="sw" style="background:${c[1]};height:11px;margin-top:11px"></div>${c[0]}</div>`).join('')}</div>`;
+  box.appendChild(d);
+ }
+}
+function setGap(i,j){gapColors[i]=j;buildGapChoices()}
+function addName(){
+ const n=document.getElementById('name').value.trim().toUpperCase().slice(0,7);if(!n)return;
+ const add=[];[...n].forEach((ch,i)=>{add.push(item({type:'letter',char:ch,fromName:true}));if(i<n.length-1){const c=colors[gapColors[i]??2];add.push(item({type:'lens',color:c[1],label:c[0],fromName:true,required:true}))}});
+ const need=add.reduce((s,x)=>s+mm[x.type],0);if(!canAdd(need))return;
+ save();const p=insertPos();items.splice(p,0,...add);insertAt=p+add.length;render();
+}
+function forbiddenBetweenLetters(seq){
+ let count=0;
+ for(let i=0;i<seq.length;i++)if(seq[i].type==='letter'){
+  let j=i+1;while(j<seq.length&&seq[j].type==='lens')j++;
+  if(j<seq.length&&seq[j].type==='letter'&&j===i+1)count++;
+  if(j<seq.length&&seq[j].type==='letter'&&seq.slice(i+1,j).some(x=>x.type!=='lens'))count++;
+ }
+ return count;
+}
+function selectItem(i){
+ if(moveMode&&selected!==null){moveTo(i);return}
+ selected=i;insertAt=i+1;moveMode=false;render();
+}
+function toggleMove(){if(selected===null)return;moveMode=!moveMode;updateEdit()}
+function moveTo(target){
+ if(selected===null||target===selected)return;
+ const before=forbiddenBetweenLetters(items), test=items.map(x=>({...x})), moved=test.splice(selected,1)[0];
+ let dest=target;if(selected<target)dest--;test.splice(Math.max(0,dest),0,moved);
+ if(forbiddenBetweenLetters(test)>before){alert("Ce déplacement casserait la règle du prénom : entre deux lettres, il doit y avoir une lentille.");moveMode=false;render();return}
+ save();items=test;selected=Math.max(0,dest);insertAt=selected+1;moveMode=false;render();
+}
+function deleteSelected(){
+ if(selected===null)return;
+ const before=forbiddenBetweenLetters(items),test=items.map(x=>({...x}));test.splice(selected,1);
+ if(forbiddenBetweenLetters(test)>before){alert("Cette suppression enlèverait une lentille obligatoire entre deux lettres.");return}
+ save();items=test;selected=null;insertAt=null;render();
+}
+function clearSelection(){selected=null;moveMode=false;insertAt=null;render()}
+function addAtEnd(){selected=null;moveMode=false;insertAt=null;render()}
+function updateEdit(){
+ const t=document.getElementById('editText'),m=document.getElementById('moveBtn'),d=document.getElementById('deleteBtn'),c=document.getElementById('cancelBtn');
+ if(selected===null||!items[selected]){t.textContent='✋ Touche un élément de l’aperçu pour le sélectionner.';m.style.display=d.style.display=c.style.display='none';return}
+ m.style.display=d.style.display=c.style.display='';
+ t.innerHTML=moveMode?'↔ <b>Déplacement :</b> touche l’élément devant lequel tu veux placer la sélection.':'✓ Sélectionné : le prochain ajout se placera juste après.';
+}
+function coord(i,n){
+ const width=300,left=80,x=n<=1?230:left+(i/(n-1))*width,mid=230,norm=(x-mid)/150;
+ return [x,235+85*(1-norm*norm)];
+}
+function render(){
+ const box=document.getElementById('beads');box.innerHTML='';
+ items.forEach((x,i)=>{
+  const e=document.createElement('div'),p=coord(i,items.length),s=x.type==='r12'||x.type==='letter'?25:x.type==='lens'?13:29;
+  e.className='bead '+(x.type==='h14'?'hex':x.type==='letter'?'letter':x.type==='lens'?'lens':'round')+(selected===i?' selected':'');
+  e.style.left=p[0]+'px';e.style.top=p[1]+'px';e.style.width=(x.type==='lens'?9:s)+'px';e.style.height=s+'px';e.style.background=x.color||'#fff';if(x.char)e.textContent=x.char;e.onclick=()=>selectItem(i);box.appendChild(e);
+ });
+ const t=total();document.getElementById('meter').style.width=Math.min(100,t/2)+'%';document.getElementById('length').textContent=t+' / 200 mm';document.getElementById('qty').textContent=items.length+' élément'+(items.length>1?'s':'');
+ const name=items.filter(x=>x.type==='letter').map(x=>x.char).join('');
+ document.getElementById('recap').innerHTML=`Anneau : <b>${chosenRing[1]}</b><br>Longueur : <b>${t} mm</b><br>Prénom : <b>${name||'—'}</b>`;
+ updateEdit();
+}
+function finalize(){
+ if(!items.length)return alert('Ajoute d’abord tes perles.');
+ const ok=x=>x&&['r12','r14','h14'].includes(x.type);
+ if(!ok(items[0])||!ok(items[items.length-1]))return alert('La première et la dernière perle doivent être rondes ou hexagonales.');
+ if(forbiddenBetweenLetters(items)>0)return alert('Il manque une lentille entre certaines lettres du prénom.');
+ alert('Création valide ❤️');
+}
+function undo(){const prev=history.pop();if(!prev)return;items=prev.map(x=>({...x}));selected=null;moveMode=false;insertAt=null;render()}
+function resetAll(){save();items=[];selected=null;moveMode=false;insertAt=null;document.getElementById('name').value='';gapColors=[];buildGapChoices();render()}
+document.querySelectorAll('.ah').forEach(h=>h.onclick=()=>{const s=h.parentElement,open=!s.classList.contains('open');document.querySelectorAll('.ac').forEach(x=>x.classList.remove('open'));if(open)s.classList.add('open')});
+makePalettes();buildGapChoices();render();
+</script></body></html>
