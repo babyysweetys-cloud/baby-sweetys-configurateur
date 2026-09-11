@@ -7,6 +7,26 @@
 .totalBox .amount{font-size:27px;font-weight:800;color:#8d5e59}
 .orderSteps{margin-top:15px;padding:16px;border:1px solid #efc8d0;border-radius:16px;background:#fff5f7;line-height:1.5}
 .orderSteps h3{margin:0 0 10px}.orderStep{margin:9px 0}.warningCopy{border:1px solid #e8a7b3;border-radius:10px;padding:9px;margin-top:12px;color:#a84f62;font-weight:700}
+.organizeBox{background:#fff;border:1px solid #eadbd6;border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 4px 16px #7b5b5210}
+.organizeBox h3{margin:0 0 6px}
+.organizeHelp{background:#fff0f3;border:1px solid #efc8d0;border-radius:12px;padding:10px 12px;margin:10px 0;font-size:13px;line-height:1.45}
+.organizeStatus{font-weight:700;color:#9b5361;margin-top:6px}
+.organizeRow{display:flex;gap:8px;overflow-x:auto;padding:8px 2px 12px;scrollbar-width:thin}
+.organizeItem{flex:0 0 74px;border:1px solid #eadbd6;border-radius:12px;padding:7px 5px;background:#fff;text-align:center;position:relative}
+.organizeItem.moveSource{outline:3px solid #dc8f9e;outline-offset:2px;background:#fff7f9}
+.organizeItem.moveTarget{cursor:pointer}
+.orgVisual{height:42px;display:flex;align-items:center;justify-content:center}
+.orgCircle{width:30px;height:30px;border-radius:50%;border:1px solid #0001}
+.orgHex{width:32px;height:32px;clip-path:polygon(25% 7%,75% 7%,100% 50%,75% 93%,25% 93%,0 50%)}
+.orgSpacer{height:30px;border-radius:45%;border:1px solid #0001}
+.orgLetter{width:30px;height:30px;border:1px solid #ddd;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+.orgMotif{font-size:27px}
+.orgLabel{font-size:10px;color:#846b66;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:2px 0 5px}
+.orgActions{display:flex;gap:4px;justify-content:center}
+.orgBtn{border:0;border-radius:8px;padding:5px 7px;background:#f8ecef;color:#9b5361;font-size:13px;cursor:pointer}
+.orgBtn.delete{background:#fff0f3;color:#c34d68}
+.orgEnd{border:1px dashed #dc8f9e;border-radius:12px;background:#fff7f9;color:#9b5361;padding:10px 12px;min-width:105px;align-self:stretch;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;font-weight:700;cursor:pointer}
+@media(max-width:600px){.organizeItem{flex-basis:68px}.orgBtn{padding:5px 6px}.organizeHelp{font-size:12px}}
 @media(max-width:600px){.preview{top:0;padding:8px}.preview .chain{min-height:72px;max-height:82px}.preview .insertHint{display:none}.preview .liveLength{font-size:12px;margin:4px 0 6px}.preview .row{gap:5px}.preview .btn{padding:8px 9px;font-size:12px}.insertHint{font-size:11px}.hero h1{font-size:28px}.chain{min-height:100px;padding:10px 5px}.clip{width:72px;height:60px;flex-basis:72px}.clip img{max-width:72px;max-height:60px;transform:scaleX(-1)}.letter{width:25px;height:25px;flex-basis:25px;font-size:14px}.loop{width:45px;height:24px;flex-basis:45px}.app{padding:10px}}</style></head><body><div class='app'><div class='hero'><h1>Cr&#233;e ton attache-t&#233;tine</h1><p>Choisis ton clip, tes perles, ton pr&#233;nom et visualise ta cr&#233;ation en direct &#9825;</p></div><div class='preview'><div id='chain' class='chain'></div><div id='liveLength' class='liveLength'>Longueur utilisée : 0 mm / 170 mm — il reste 170 mm</div><div class='note' style='text-align:center;margin:3px 0 7px'>
 Longueur finale : <b>22 cm maximum</b> — jusqu’à <b>17 cm de partie perlée</b> + <b>5 cm de boucle</b> pour fixer la tétine.
 </div><div id='safetyRule' class='note' style='text-align:center;font-weight:700;margin:5px 0'>
@@ -16,7 +36,15 @@ Longueur finale : <b>22 cm maximum</b> — jusqu’à <b>17 cm de partie perlée
 <div id='threads' class='options'></div></div><div class='section'><h3>1. Choisis ton clip</h3><div id='clips' class='options'><div class='opt'><div class='dot' style='border-radius:12px;background:#f28eae;position:relative'><span style="position:absolute;width:18px;height:7px;background:#aaa;right:-12px;top:20px;border-radius:4px"></span></div><small>Rose</small></div><div class='opt'><div class='dot' style='border-radius:12px;background:#f5cbd4;position:relative'><span style="position:absolute;width:18px;height:7px;background:#aaa;right:-12px;top:20px;border-radius:4px"></span></div><small>Rose pâle</small></div><div class='opt'><div class='dot' style='border-radius:12px;background:#c4a1dc;position:relative'><span style="position:absolute;width:18px;height:7px;background:#aaa;right:-12px;top:20px;border-radius:4px"></span></div><small>Lilas</small></div><div class='opt'><div class='dot' style='border-radius:12px;background:#f2ad87;position:relative'><span style="position:absolute;width:18px;height:7px;background:#aaa;right:-12px;top:20px;border-radius:4px"></span></div><small>Pêche</small></div><div class='opt'><div class='dot' style='border-radius:12px;background:#dbc6aa;position:relative'><span style="position:absolute;width:18px;height:7px;background:#aaa;right:-12px;top:20px;border-radius:4px"></span></div><small>Beige</small></div><div class='opt'><div class='dot' style='border-radius:12px;background:#a87343;position:relative'><span style="position:absolute;width:18px;height:7px;background:#aaa;right:-12px;top:20px;border-radius:4px"></span></div><small>Camel</small></div><div class='opt'><div class='dot' style='border-radius:12px;background:#677a35;position:relative'><span style="position:absolute;width:18px;height:7px;background:#aaa;right:-12px;top:20px;border-radius:4px"></span></div><small>Kaki</small></div><div class='opt'><div class='dot' style='border-radius:12px;background:#78d7cc;position:relative'><span style="position:absolute;width:18px;height:7px;background:#aaa;right:-12px;top:20px;border-radius:4px"></span></div><small>Menthe</small></div></div></div><div class='section'><h3>2. Ajoute des perles rondes 12 mm</h3><div id='rounds12' class='options'><div class='opt'><div class='dot' style='background:#f28eae'></div><small>Rose</small></div><div class='opt'><div class='dot' style='background:#f5cbd4'></div><small>Rose pâle</small></div><div class='opt'><div class='dot' style='background:#c4a1dc'></div><small>Lilas</small></div><div class='opt'><div class='dot' style='background:#f2ad87'></div><small>Pêche</small></div><div class='opt'><div class='dot' style='background:#dbc6aa'></div><small>Beige</small></div><div class='opt'><div class='dot' style='background:#a87343'></div><small>Camel</small></div><div class='opt'><div class='dot' style='background:#677a35'></div><small>Kaki</small></div><div class='opt'><div class='dot' style='background:#78d7cc'></div><small>Menthe</small></div><div class='opt'><div class='dot' style='background:#7fa3d4'></div><small>Bleu pastel</small></div><div class='opt'><div class='dot' style='background:#161719'></div><small>Noir</small></div></div></div><div class='section'><h3>3. Ajoute des perles rondes 14 mm</h3><div id='rounds14' class='options'><div class='opt'><div class='dot' style='background:#f28eae'></div><small>Rose</small></div><div class='opt'><div class='dot' style='background:#f5cbd4'></div><small>Rose pâle</small></div><div class='opt'><div class='dot' style='background:#c4a1dc'></div><small>Lilas</small></div><div class='opt'><div class='dot' style='background:#f2ad87'></div><small>Pêche</small></div><div class='opt'><div class='dot' style='background:#dbc6aa'></div><small>Beige</small></div><div class='opt'><div class='dot' style='background:#a87343'></div><small>Camel</small></div><div class='opt'><div class='dot' style='background:#677a35'></div><small>Kaki</small></div><div class='opt'><div class='dot' style='background:#78d7cc'></div><small>Menthe</small></div><div class='opt'><div class='dot' style='background:#7fa3d4'></div><small>Bleu pastel</small></div><div class='opt'><div class='dot' style='background:#161719'></div><small>Noir</small></div></div></div><div class='section'><h3>4. Ajoute des perles hexagonales 14 mm</h3><div id='hexes' class='options'><div class='opt'><div class='dot hexDot' style='background:#f28eae'></div><small>Rose</small></div><div class='opt'><div class='dot hexDot' style='background:#f5cbd4'></div><small>Rose pâle</small></div><div class='opt'><div class='dot hexDot' style='background:#c4a1dc'></div><small>Lilas</small></div><div class='opt'><div class='dot hexDot' style='background:#f2ad87'></div><small>Pêche</small></div><div class='opt'><div class='dot hexDot' style='background:#dbc6aa'></div><small>Beige</small></div><div class='opt'><div class='dot hexDot' style='background:#a87343'></div><small>Camel</small></div><div class='opt'><div class='dot hexDot' style='background:#677a35'></div><small>Kaki</small></div><div class='opt'><div class='dot hexDot' style='background:#78d7cc'></div><small>Menthe</small></div><div class='opt'><div class='dot hexDot' style='background:#7fa3d4'></div><small>Bleu pastel</small></div><div class='opt'><div class='dot hexDot' style='background:#161719'></div><small>Noir</small></div></div></div><div class='section'><h3>5. Ajoute des lentilles &#8212; 5 mm d&#8217;&#233;paisseur</h3><div class='insertHelpBox'>💡 <b>Tu veux mettre une lentille entre deux lettres ?</b><br>Touche d’abord la lettre concernée dans <b>« Ta création en direct »</b> en haut de l’écran. Elle s’entourera en rose. Puis choisis la couleur de ta lentille ci-dessous.<span class='example'>Exemple : pour l’ajouter entre L et É, touche le L puis choisis la lentille.</span></div><div id='lentilles' class='options'><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:18px;height:34px;background:#f28eae;border-radius:45%"></span></div><small>Rose</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:18px;height:34px;background:#f5cbd4;border-radius:45%"></span></div><small>Rose pâle</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:18px;height:34px;background:#c4a1dc;border-radius:45%"></span></div><small>Lilas</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:18px;height:34px;background:#f2ad87;border-radius:45%"></span></div><small>Pêche</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:18px;height:34px;background:#dbc6aa;border-radius:45%"></span></div><small>Beige</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:18px;height:34px;background:#a87343;border-radius:45%"></span></div><small>Camel</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:18px;height:34px;background:#677a35;border-radius:45%"></span></div><small>Kaki</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:18px;height:34px;background:#78d7cc;border-radius:45%"></span></div><small>Menthe</small></div></div></div><div class='section'><h3>6. Ajoute des perles &#224; pois &#8212; 2 mm d&#8217;&#233;paisseur</h3><div class='insertHelpBox'>💡 <b>Tu veux mettre une perle à pois entre deux lettres ?</b><br>Touche d’abord la lettre concernée dans <b>« Ta création en direct »</b> en haut de l’écran. Elle s’entourera en rose. Puis choisis la couleur de ta perle à pois ci-dessous.<span class='example'>Exemple : pour l’ajouter entre L et É, touche le L puis choisis la perle à pois.</span></div><div id='pois' class='options'><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:9px;height:34px;background:#f28eae;border-radius:45%"></span></div><small>Rose</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:9px;height:34px;background:#f5cbd4;border-radius:45%"></span></div><small>Rose pâle</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:9px;height:34px;background:#c4a1dc;border-radius:45%"></span></div><small>Lilas</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:9px;height:34px;background:#f2ad87;border-radius:45%"></span></div><small>Pêche</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:9px;height:34px;background:#dbc6aa;border-radius:45%"></span></div><small>Beige</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:9px;height:34px;background:#a87343;border-radius:45%"></span></div><small>Camel</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:9px;height:34px;background:#677a35;border-radius:45%"></span></div><small>Kaki</small></div><div class='opt'><div class='dot' style='background:#fff'><span style="display:inline-block;width:9px;height:34px;background:#78d7cc;border-radius:45%"></span></div><small>Menthe</small></div></div></div><div class='section'><h3>7. Ajoute un motif</h3><div id='motifs' class='options'><div class='opt'><div class='dot motif'>✿</div><small>Fleur · 30 mm</small></div><div class='opt'><div class='dot motif'>♥</div><small>Cœur · 20 mm</small></div><div class='opt'><div class='dot motif'>★</div><small>Étoile · 10 mm</small></div><div class='opt'><div class='dot motif'>🐻</div><small>Ourson · 30 mm</small></div></div></div><div class='section'><h3>8. Ajoute ton pr&#233;nom (7 lettres max)</h3><input id='name' class='name' maxlength='7' placeholder='Ex. L&#201;O' oninput='setName(this.value)'><div class='counter'><span id='count'>0</span> / 7</div><div class='letters'><div id='gold' class='letterStyle selected' onclick="setLetterStyle('gold')">A B C<br><small>Lettres blanches dor&#233;es</small></div><div id='black' class='letterStyle' onclick="setLetterStyle('black')">A B C<br><small>Lettres blanches noires</small></div></div></div><div class='section'><h3>9. Souhaites-tu un ou plusieurs adaptateurs MAM ?</h3>
 <div class='mamBox'><h4>💡 À quoi sert l’adaptateur MAM ?</h4>
 <div class='note' style='font-size:14px;line-height:1.55'>Certaines tétines n’ont pas d’anneau permettant d’accrocher directement l’attache-tétine. L’adaptateur MAM se fixe sur ce type de tétine et permet ensuite d’y accrocher facilement ton attache-tétine.<br><br><b>Si ta tétine possède déjà un anneau, tu n’en as généralement pas besoin.</b><br><br><span style='color:#b85f73;font-weight:700'>Tu peux en ajouter plusieurs si tu souhaites en avoir un de rechange.</span></div>
-<div class='mamQty'><b>Nombre d’adaptateur(s) MAM</b><div class='mamCounter'><button type='button' onclick='changeMam(-1)'>−</button><span id='mamQty'>0</span><button type='button' onclick='changeMam(1)'>+</button></div><span class='note'><b>+ 0,70 €</b> par adaptateur</span></div></div></div><div class='summary'><div><b>Aper&#231;u de ta cr&#233;ation</b></div><div id='lengthInfo' class='note' style='font-size:15px;margin:8px 0'><b>Longueur utilis&#233;e : 0 mm / 170 mm</b></div><div id='tags'></div><div class='totalBox'><div>Prix total</div><div id='totalPrice' class='amount'>18,50 €</div><div id='priceDetail' class='note'>Attache-tétine : 18,50 €</div></div><button class='btn primary' onclick='validateCreation()'>&#9825; Valider ma cr&#233;ation</button><div id='creationResult' class='creationResult'><div class='orderSteps'><h3>🎉 Ta création est terminée !</h3>
+<div class='mamQty'><b>Nombre d’adaptateur(s) MAM</b><div class='mamCounter'><button type='button' onclick='changeMam(-1)'>−</button><span id='mamQty'>0</span><button type='button' onclick='changeMam(1)'>+</button></div><span class='note'><b>+ 0,70 €</b> par adaptateur</span></div></div></div><div class='organizeBox'>
+<h3>10. Organise ta création</h3>
+<div class='organizeHelp'>
+<b>↔️ Pour déplacer un élément :</b> touche le bouton <b>↔</b> sous la perle, la lettre ou le motif que tu veux déplacer, puis touche l’élément <b>devant lequel</b> tu veux le placer.<br>
+<b>🗑️ Pour supprimer :</b> touche simplement la corbeille sous l’élément concerné.
+<div id='organizeStatus' class='organizeStatus'>Tu peux modifier l’ordre de ta création à tout moment.</div>
+</div>
+<div id='organizeRow' class='organizeRow'></div>
+</div><div class='summary'><div><b>Aper&#231;u de ta cr&#233;ation</b></div><div id='lengthInfo' class='note' style='font-size:15px;margin:8px 0'><b>Longueur utilis&#233;e : 0 mm / 170 mm</b></div><div id='tags'></div><div class='totalBox'><div>Prix total</div><div id='totalPrice' class='amount'>18,50 €</div><div id='priceDetail' class='note'>Attache-tétine : 18,50 €</div></div><button class='btn primary' onclick='validateCreation()'>&#9825; Valider ma cr&#233;ation</button><div id='creationResult' class='creationResult'><div class='orderSteps'><h3>🎉 Ta création est terminée !</h3>
 <div class='orderStep'><b>1. Copie ton code de création ci-dessous.</b><br><span class='note'>Il contient les détails de ton attache-tétine ainsi que le nombre d’adaptateurs MAM choisi.</span></div>
 <div>Ton code de création :</div><div id='creationCode' class='creationCode'></div>
 <div id='creationSummary' class='creationSummary'></div>
@@ -47,6 +75,7 @@ function renderThreads(){
 
 const MAX_MM=170; let uid=1;
 let state={clip:realClips[1]||realClips[0],sequence:[],name:'',letterStyle:'gold',threadColor:null,insertAt:null,mamQty:0,history:[]};
+let moveFrom=null;
 function mk(it){return {...it,uid:uid++}}
 function itemLength(it){return it.type==='round12'?12:it.type==='round14'?14:it.type==='hex'?14:it.type==='lentille'?5:it.type==='pois'?2:it.type==='motif'?(it.mm||30):it.type==='letter'?12:0}
 function usedLength(){return state.sequence.reduce((a,it)=>a+itemLength(it),0)}
@@ -76,14 +105,117 @@ if(candidate && state.sequence.length===0){
   document.getElementById('count').textContent='0';
   return;
 }const letters=state.sequence.filter(it=>it.type==='letter');const delta=(candidate.length-letters.length)*12;if(delta>0&&usedLength()+delta>MAX_MM){const maxExtra=Math.floor((MAX_MM-usedLength())/12);candidate=candidate.slice(0,letters.length+maxExtra);alert(`Le pr\u00e9nom ferait d\u00e9passer la longueur maximale de ${MAX_MM} mm (17 cm).`)}saveHistory();const common=Math.min(candidate.length,letters.length);for(let i=0;i<common;i++)letters[i].char=candidate[i];if(candidate.length<letters.length){const rm=new Set(letters.slice(candidate.length).map(x=>x.uid));state.sequence=state.sequence.filter(it=>!rm.has(it.uid))}else if(candidate.length>letters.length){const newChars=[...candidate.slice(letters.length)].map(ch=>mk({type:'letter',char:ch}));let pos;if(letters.length)pos=state.sequence.findIndex(it=>it.uid===letters[letters.length-1].uid)+1;else pos=state.insertAt===null?state.sequence.length:state.insertAt;state.sequence.splice(pos,0,...newChars);if(state.insertAt!==null&&!letters.length)state.insertAt=pos+newChars.length}state.name=candidate;document.getElementById('name').value=state.name;document.getElementById('count').textContent=state.name.length;render()}
+
+function syncNameFromSequence(){
+  state.name=state.sequence.filter(it=>it.type==='letter').map(it=>it.char).join('').slice(0,7);
+  const input=document.getElementById('name'); if(input)input.value=state.name;
+  const count=document.getElementById('count'); if(count)count.textContent=state.name.length;
+}
+function removeItemAt(index){
+  if(index<0||index>=state.sequence.length)return;
+  saveHistory();
+  state.sequence.splice(index,1);
+  state.insertAt=null;
+  moveFrom=null;
+  syncNameFromSequence();
+  render();
+}
+function startMove(index){
+  if(index<0||index>=state.sequence.length)return;
+  moveFrom=index;
+  renderOrganizer();
+}
+function cancelMove(){moveFrom=null;renderOrganizer()}
+function moveItemBefore(targetIndex){
+  if(moveFrom===null||targetIndex<0||targetIndex>=state.sequence.length)return;
+  if(targetIndex===moveFrom){cancelMove();return}
+  saveHistory();
+  const from=moveFrom;
+  const item=state.sequence.splice(from,1)[0];
+  let dest=targetIndex;
+  if(from<targetIndex)dest--;
+  state.sequence.splice(Math.max(0,dest),0,item);
+  moveFrom=null;
+  state.insertAt=null;
+  syncNameFromSequence();
+  render();
+}
+function moveItemToEnd(){
+  if(moveFrom===null)return;
+  saveHistory();
+  const item=state.sequence.splice(moveFrom,1)[0];
+  state.sequence.push(item);
+  moveFrom=null;
+  state.insertAt=null;
+  syncNameFromSequence();
+  render();
+}
+function orgLabel(it){
+  if(it.type==='letter')return 'Lettre '+it.char;
+  if(it.type==='motif')return it.motif[0];
+  const color=it.color?it.color[0]:'';
+  if(it.type==='round12')return 'Ronde 12 · '+color;
+  if(it.type==='round14')return 'Ronde 14 · '+color;
+  if(it.type==='hex')return 'Hexa 14 · '+color;
+  if(it.type==='lentille')return 'Lentille · '+color;
+  if(it.type==='pois')return 'Pois · '+color;
+  return 'Élément';
+}
+function orgVisual(it){
+  if(it.type==='letter')return `<div class="orgLetter" style="color:${state.letterStyle==='gold'?'#b17813':'#111'}">${it.char}</div>`;
+  if(it.type==='motif')return `<div class="orgMotif">${it.motif[1]}</div>`;
+  const col=it.color?it.color[1]:'#ddd';
+  if(it.type==='hex')return `<div class="orgHex" style="background:${col}"></div>`;
+  if(it.type==='lentille')return `<div class="orgSpacer" style="width:14px;background:${col}"></div>`;
+  if(it.type==='pois')return `<div class="orgSpacer" style="width:7px;background:${col}"></div>`;
+  return `<div class="orgCircle" style="background:${col}"></div>`;
+}
+function renderOrganizer(){
+  const row=document.getElementById('organizeRow');
+  const status=document.getElementById('organizeStatus');
+  if(!row)return;
+  row.innerHTML='';
+  if(!state.sequence.length){
+    row.innerHTML='<div class="note">Ajoute d’abord des perles à ta création.</div>';
+    if(status)status.textContent='Tu pourras ensuite les déplacer ou les supprimer ici.';
+    return;
+  }
+  if(status){
+    status.textContent=moveFrom===null
+      ? 'Tu peux modifier l’ordre de ta création à tout moment.'
+      : 'Élément sélectionné : touche maintenant l’élément devant lequel tu veux le placer.';
+  }
+  state.sequence.forEach((it,index)=>{
+    const card=document.createElement('div');
+    card.className='organizeItem'+(moveFrom===index?' moveSource':'')+(moveFrom!==null&&moveFrom!==index?' moveTarget':'');
+    card.innerHTML=`<div class="orgVisual">${orgVisual(it)}</div><div class="orgLabel">${orgLabel(it)}</div>
+      <div class="orgActions">
+        <button type="button" class="orgBtn" title="Déplacer">↔</button>
+        <button type="button" class="orgBtn delete" title="Supprimer">🗑</button>
+      </div>`;
+    const buttons=card.querySelectorAll('button');
+    buttons[0].onclick=(e)=>{e.stopPropagation(); moveFrom===index?cancelMove():startMove(index)};
+    buttons[1].onclick=(e)=>{e.stopPropagation(); removeItemAt(index)};
+    card.onclick=()=>{if(moveFrom!==null&&moveFrom!==index)moveItemBefore(index)};
+    row.appendChild(card);
+  });
+  if(moveFrom!==null){
+    const end=document.createElement('div');
+    end.className='orgEnd';
+    end.innerHTML='Placer<br>à la fin ➜';
+    end.onclick=moveItemToEnd;
+    row.appendChild(end);
+  }
+}
+
 function setLetterStyle(s){state.letterStyle=s;document.getElementById('gold').classList.toggle('selected',s==='gold');document.getElementById('black').classList.toggle('selected',s==='black');render()}
-function undo(){const p=state.history.pop();if(!p)return;state.sequence=p.sequence.map(x=>({...x}));state.name=p.name;state.insertAt=p.insertAt;document.getElementById('name').value=state.name;document.getElementById('count').textContent=state.name.length;render()}
-function resetAll(){saveHistory();state.sequence=[];state.name='';state.insertAt=null;document.getElementById('name').value='';document.getElementById('count').textContent='0';render()}
+function undo(){const p=state.history.pop();if(!p)return;moveFrom=null;state.sequence=p.sequence.map(x=>({...x}));state.name=p.name;state.insertAt=p.insertAt;document.getElementById('name').value=state.name;document.getElementById('count').textContent=state.name.length;render()}
+function resetAll(){saveHistory();moveFrom=null;state.sequence=[];state.name='';state.insertAt=null;document.getElementById('name').value='';document.getElementById('count').textContent='0';render()}
 function makeClickable(d,index){d.classList.add('chainItem');d.dataset.insertAt=String(index+1);if(state.insertAt===index+1)d.classList.add('insertAnchor');d.onclick=()=>setInsertAt(index+1)}
 function beadPx(mm){const mobile=window.innerWidth<=600;return Math.max(5,Math.round(mm*(mobile?1.7:2.45)))}
 function render(){let c=document.getElementById('chain');c.innerHTML='';let cl=document.createElement('div');cl.className='clip';cl.innerHTML=state.clip[2]?`<img src='${state.clip[2]}' alt='clip ${state.clip[0]}' style='transform:scaleX(-1)'>`:`<div style="width:58px;height:58px;border-radius:50%;background:${state.clip[1]};position:relative;box-shadow:inset 0 0 0 2px #0001"><span style="position:absolute;width:28px;height:10px;background:#aaa;right:-22px;top:24px;border-radius:5px"></span></div>`;c.appendChild(cl);state.sequence.forEach((it,index)=>{let d=document.createElement('div');if(it.type==='letter'){d.className='letter';d.style.color=state.letterStyle==='gold'?'#b17813':'#111';d.textContent=it.char}else if(it.type==='motif'){d.className='bead motif';const s=beadPx(it.mm||30);d.style.width=d.style.height=s+'px';d.style.fontSize=Math.max(16,s*.55)+'px';d.textContent=it.motif[1]}else if(it.type==='lentille'||it.type==='pois'){d.className='spacer '+it.type;const mm=itemLength(it);d.style.width=Math.max(3,beadPx(mm))+'px';d.style.height=(it.type==='lentille'?Math.max(20,beadPx(12)):Math.max(18,beadPx(11)))+'px';d.style.background=it.color[1];d.title=`${it.type==='lentille'?'Lentille':'Perle \u00e0 pois'} ${mm} mm d\u2019\u00e9paisseur`}else{d.className='bead';const mm=itemLength(it),s=beadPx(mm);d.style.width=d.style.height=s+'px';const src=it.color&&it.color[2];if(src)d.innerHTML=`<img src='${src}' alt='${it.color[0]}'>`;else{d.style.background=it.color[1];d.style.borderRadius=it.type==='hex'?'0':'50%';if(it.type==='hex')d.style.clipPath='polygon(25% 7%,75% 7%,100% 50%,75% 93%,25% 93%,0 50%)'}}makeClickable(d,index);c.appendChild(d)});let loop=document.createElement('div');loop.className='loop';
 loop.style.borderColor=state.threadColor?state.threadColor[1]:'#eee';
-c.appendChild(loop);const used=usedLength();document.getElementById('lengthInfo').innerHTML=`<b>Longueur utilis\u00e9e : ${used} mm / ${MAX_MM} mm</b> \u2014 il reste ${MAX_MM-used} mm`;const liveLength=document.getElementById('liveLength');if(liveLength){liveLength.textContent=`Longueur utilisée : ${used} mm / ${MAX_MM} mm — il reste ${MAX_MM-used} mm`;liveLength.classList.toggle('warning',MAX_MM-used<=20);}const beadCount=state.sequence.filter(it=>it.type!=='letter').length;document.getElementById('tags').innerHTML=`<span class='tag'>Clip : ${state.clip[0]}</span><span class='tag'>${beadCount} perle(s)</span>${state.name?`<span class='tag'>Pr\u00e9nom : ${state.name}</span>`:''}<span class='tag'>Lettres : ${state.letterStyle==='gold'?'dor\u00e9es':'noires'}</span>`;updatePrice();const badge=document.getElementById('insertBadge');badge.textContent=state.insertAt===null?'Ajout \u00e0 la fin':`La prochaine perle sera ins\u00e9r\u00e9e apr\u00e8s l\u2019\u00e9l\u00e9ment n\u00b0 ${state.insertAt}`}
+c.appendChild(loop);const used=usedLength();document.getElementById('lengthInfo').innerHTML=`<b>Longueur utilis\u00e9e : ${used} mm / ${MAX_MM} mm</b> \u2014 il reste ${MAX_MM-used} mm`;const liveLength=document.getElementById('liveLength');if(liveLength){liveLength.textContent=`Longueur utilisée : ${used} mm / ${MAX_MM} mm — il reste ${MAX_MM-used} mm`;liveLength.classList.toggle('warning',MAX_MM-used<=20);}const beadCount=state.sequence.filter(it=>it.type!=='letter').length;document.getElementById('tags').innerHTML=`<span class='tag'>Clip : ${state.clip[0]}</span><span class='tag'>${beadCount} perle(s)</span>${state.name?`<span class='tag'>Pr\u00e9nom : ${state.name}</span>`:''}<span class='tag'>Lettres : ${state.letterStyle==='gold'?'dor\u00e9es':'noires'}</span>`;updatePrice();renderOrganizer();const badge=document.getElementById('insertBadge');badge.textContent=state.insertAt===null?'Ajout \u00e0 la fin':`La prochaine perle sera ins\u00e9r\u00e9e apr\u00e8s l\u2019\u00e9l\u00e9ment n\u00b0 ${state.insertAt}`}
 function euro(n){return n.toFixed(2).replace('.',',')+' €'}
 function updatePrice(){const total=18.50+(state.mamQty||0)*0.70;const q=document.getElementById('mamQty');if(q)q.textContent=state.mamQty||0;const p=document.getElementById('totalPrice');if(p)p.textContent=euro(total);const d=document.getElementById('priceDetail');if(d)d.textContent=(state.mamQty||0)?`18,50 € + ${(state.mamQty||0)} × 0,70 € d’adaptateur MAM`:'Attache-tétine : 18,50 €'}
 function changeMam(delta){state.mamQty=Math.max(0,Math.min(9,(state.mamQty||0)+delta));updatePrice();render()}
