@@ -164,7 +164,7 @@ function sequenceLettersRuleOK(seq){
 }
 function moveSelectedBefore(target){
  if(selectedEdit===null||!moveMode||target<0||target>=state.sequence.length)return;
- if(target===selectedEdit){moveMode=false;updateEditBar();return}
+ if(target===selectedEdit){moveMode=false;render();return}
 
  const from=selectedEdit;
  const testSeq=state.sequence.map(x=>({...x}));
@@ -177,7 +177,7 @@ function moveSelectedBefore(target){
  if(!sequenceLettersRuleOK(testSeq)){
    alert("Entre deux lettres, seules les lentilles et les perles à pois sont autorisées.");
    moveMode=false;
-   updateEditBar();
+   render();
    return;
  }
 
@@ -196,7 +196,7 @@ function moveSelectedEnd(){
  if(!sequenceLettersRuleOK(testSeq)){
    alert("Ce déplacement laisserait une perle non autorisée entre deux lettres. Entre deux lettres, seules les lentilles et les perles à pois sont autorisées.");
    moveMode=false;
-   updateEditBar();
+   render();
    return;
  }
 
