@@ -213,7 +213,47 @@ document.getElementById('creationResult').scrollIntoView({behavior:'smooth',bloc
 }
 async function copyCreationCode(){if(!window.currentCreationCode)return;try{await navigator.clipboard.writeText(window.currentCreationCode);document.getElementById('copyOk').textContent='✓ Code copié !'}catch(e){const ta=document.createElement('textarea');ta.value=window.currentCreationCode;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();document.getElementById('copyOk').textContent='✓ Code copié !'}}
 
-window.addEventListener('message',function(e){if(!e.data)return;if(e.data.type==='baby-sweetys-set-insert-at'){const n=e.data.insertAt===null?null:Number(e.data.insertAt);if(n===null||Number.isFinite(n))setInsertAt(n)}});
+window.addEventListener('message',function(e){
+  if(!e.data)return;
+  const m=e.data;
+  if(m.type==='baby-sweetys-set-insert-at'){
+    const n=m.insertAt===null?null:Number(m.insertAt);
+    if(n===null||Number.isFinite(n))setInsertAt(n);
+    return;
+  }
+  if(m.type==='baby-sweetys-edit-select'){
+    const n=Number(m.index);
+    if(Number.isFinite(n))selectForEdit(n);
+    return;
+  }
+  if(m.type==='baby-sweetys-edit-delete'){
+    deleteSelected();
+    return;
+  }
+  if(m.type==='baby-sweetys-edit-move-toggle'){
+    toggleMoveSelected();
+    return;
+  }
+  if(m.type==='baby-sweetys-edit-move-before'){
+    const n=Number(m.index);
+    if(Number.isFinite(n))moveSelectedBefore(n);
+    return;
+  }
+  if(m.type==='baby-sweetys-edit-move-end'){
+    moveSelectedEnd();
+    return;
+  }
+  if(m.type==='baby-sweetys-edit-cancel'){
+    cancelEdit();
+    return;
+  }
+  if(m.type==='baby-sweetys-insert-after-selected'){
+    if(selectedEdit!==null && state.sequence[selectedEdit] && state.sequence[selectedEdit].type==='letter'){
+      setInsertAt(selectedEdit+1);
+    }
+    return;
+  }
+});
 renderThreads();renderClips();renderRealBeads('rounds12','round12',realRounds,'circle');renderRealBeads('rounds14','round14',realRounds,'circle');renderRealBeads('hexes','hex',realHexes,'hex');renderTiny('lentilles','lentille');renderTiny('pois','pois');renderMotifs();render();window.addEventListener('resize',render);
 </script>
 <script>
