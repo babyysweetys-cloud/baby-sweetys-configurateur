@@ -1,0 +1,104 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Décodeur commandes Baby Sweety's</title><style>*{box-sizing:border-box}body{margin:0;background:#fffaf8;color:#563d39;font-family:Arial,sans-serif}.wrap{max-width:860px;margin:auto;padding:22px}.card{background:#fff;border:1px solid #eadbd6;border-radius:18px;padding:20px;box-shadow:0 6px 24px #7b5b5218}h1{font-family:Georgia,serif;color:#8d5e59;font-size:28px;margin-top:0}textarea{width:100%;min-height:90px;border:1px solid #dccbc6;border-radius:12px;padding:13px;font-size:16px;resize:vertical}.btn{width:100%;border:0;border-radius:12px;padding:13px 16px;background:#dc8295;color:white;font-weight:700;font-size:16px;margin:10px 0;cursor:pointer}.btn.secondary{background:#f5e7e5;color:#563d39}.out{display:none;background:#fffaf8;border:1px solid #eadbd6;border-radius:14px;padding:15px;margin-top:14px;white-space:pre-wrap;line-height:1.55}.err{color:#b04d5d;font-weight:700;margin-top:8px}.note{font-size:13px;color:#846b66}.previewWrap{display:none;margin-top:16px;padding:14px;background:#fff;border:1px solid #eadbd6;border-radius:14px}.previewTitle{font-weight:700;margin-bottom:8px}.canvasBox{overflow-x:auto;background:#fffdfc;border-radius:12px;border:1px solid #f1e4df;padding:8px}canvas{display:block;max-width:none;background:#fffdfc;border-radius:10px}.small{font-size:12px;color:#846b66;margin-top:7px}</style></head><body><div class="wrap"><div class="card"><h1>♡ Décodeur de commande</h1><p>Colle ici le <b>Code de création</b> reçu dans la commande Webador.</p><textarea id="code" placeholder="Ex. BS3-..."></textarea><button class="btn" onclick="decodeOrder()">Afficher la création</button><div id="err" class="err"></div><div id="previewWrap" class="previewWrap"><div class="previewTitle">Aperçu visuel de la création</div><div class="canvasBox"><canvas id="previewCanvas" width="1200" height="235"></canvas></div><button class="btn secondary" onclick="downloadImage()">📷 Enregistrer l’image de la création</button><div class="small">L’image reprend le clip, l’ordre exact des éléments, les lettres, les couleurs et le fil.</div></div><div id="out" class="out"></div><p class="note">Le nombre d’adaptateurs MAM et le prix total sont enregistrés directement dans le code de création.</p></div></div><script>
+const clips=['Lilas','Vieux rose','Blush','Bordeaux','Noir','Beige','Bleu pastel','Fuchsia'];
+const threads=['Noir','Blanc','Gris clair','Gris foncé','Rose','Bleu'];
+const colors=['Rose','Rose pâle','Blush','Fuchsia','Lilas','Pêche','Beige','Camel','Chocolat','Bordeaux','Jaune','Moutarde','Vert citron','Kaki','Sauge','Menthe','Turquoise','Bleu ciel','Bleu pastel','Bleu','Bleu foncé','Gris','Noir','Blanc'];
+const motifs=[['Fleur',30,'✿'],['Cœur',20,'♥'],['Nœud',20,'🎀'],['Papillon',30,'🦋'],['Arc-en-ciel',30,'🌈'],['Ourson',30,'🐻'],['Lapin',30,'🐰'],['Étoile',10,'★']];
+const colorHex={'Rose':'#f28eae','Rose pâle':'#f5cbd4','Blush':'#c98d8d','Fuchsia':'#d72d75','Lilas':'#c4a1dc','Pêche':'#f2ad87','Beige':'#dbc6aa','Camel':'#a87343','Chocolat':'#54342c','Bordeaux':'#7b202b','Jaune':'#ead839','Moutarde':'#c8a20b','Vert citron':'#a5b72c','Kaki':'#677a35','Sauge':'#a8b9a2','Menthe':'#78d7cc','Turquoise':'#169ca9','Bleu ciel':'#62c5ed','Bleu pastel':'#7fa3d4','Bleu':'#1478b8','Bleu foncé':'#183c8e','Gris':'#85898d','Noir':'#161719','Blanc':'#f7f7f5','Gris clair':'#c9c9c9','Gris foncé':'#676767','Vieux rose':'#c99f9f'};
+const from36=c=>parseInt(c,36); let lastDecoded=null;
+function decodeOrder(){
+ const raw=document.getElementById('code').value.trim().toUpperCase().replace(/\s+/g,'');
+ const err=document.getElementById('err'),out=document.getElementById('out'),pw=document.getElementById('previewWrap');
+ err.textContent='';out.style.display='none';pw.style.display='none';
+ try{
+  const p=raw.split('-');
+  if(p.length<6||p[0]!=='BS3')throw new Error('Ce code n’est pas reconnu. Vérifie qu’il commence bien par BS3-.');
+
+  const clip=clips[from36(p[1])]??'Inconnu';
+  const fil=threads[from36(p[2])]??'Inconnu';
+  const style=p[3]==='G'?'dorées':'noires';
+
+  if(!/^Q[0-9A-Z]+$/.test(p[4]))throw new Error('La quantité d’adaptateurs MAM est illisible.');
+  const mam=from36(p[4].slice(1));
+  if(!Number.isFinite(mam)||mam<0||mam>9)throw new Error('Quantité d’adaptateurs MAM invalide.');
+
+  const s=p.slice(5).join('-');
+  let i=0,len=0,prenom='',items=[];
+  while(i<s.length){
+   const t=s[i++];
+   if(t==='T'){
+    if(i+1>=s.length)throw new Error('Code incomplet.');
+    const cp=parseInt(s.slice(i,i+2),36);i+=2;
+    if(!Number.isFinite(cp))throw new Error('Lettre illisible.');
+    const ch=String.fromCharCode(cp);
+    prenom+=ch;
+    items.push({type:'letter',label:`Lettre ${ch} (${style.slice(0,-1)})`,char:ch,mm:12});
+    len+=12;
+    continue;
+   }
+   if(i>=s.length)throw new Error('Code incomplet.');
+   const v=from36(s[i++]);
+   if(!Number.isFinite(v))throw new Error('Un élément du code est illisible.');
+
+   if(t==='M'){
+    const mot=motifs[v];
+    if(!mot)throw new Error('Motif inconnu.');
+    items.push({type:'motif',label:`Motif ${mot[0]} ${mot[1]}mm`,motif:mot,mm:mot[1]});
+    len+=mot[1];
+    continue;
+   }
+
+   const c=colors[v]??'Couleur inconnue';
+   if(t==='A'){items.push({type:'round12',label:`Ronde 12mm ${c}`,color:c,mm:12});len+=12}
+   else if(t==='B'){items.push({type:'round14',label:`Ronde 14mm ${c}`,color:c,mm:14});len+=14}
+   else if(t==='H'){items.push({type:'hex',label:`Hexagonale 14mm ${c}`,color:c,mm:14});len+=14}
+   else if(t==='L'){items.push({type:'lentille',label:`Lentille 5mm ${c}`,color:c,mm:5});len+=5}
+   else if(t==='P'){items.push({type:'pois',label:`Perle à pois 2mm ${c}`,color:c,mm:2});len+=2}
+   else throw new Error('Un élément du code n’est pas reconnu.');
+  }
+
+  const price=18.50+(mam*0.70);
+  lastDecoded={raw,clip,fil,style,prenom,len,items,mam,price};
+
+  out.textContent=
+`Clip : ${clip}
+Fil : ${fil}
+Prénom : ${prenom||'sans prénom'}
+Lettres : ${style}
+Adaptateur(s) MAM : ${mam}
+Prix total : ${price.toFixed(2).replace('.',',')} €
+Partie perlée : ${len} mm / 170 mm
+Longueur finale : jusqu’à 22 cm avec la boucle de 5 cm
+
+ORDRE EXACT :
+${items.map((x,n)=>`${n+1}. ${x.label}`).join('\n')}`;
+
+  out.style.display='block';
+  drawPreview(lastDecoded);
+  pw.style.display='block';
+ }catch(e){
+  err.textContent=e.message||'Impossible de lire ce code.';
+ }
+}
+function drawPreview(d){
+ const cvs=document.getElementById('previewCanvas'),ctx=cvs.getContext('2d'); const scale=2.3; const pad=34; let x=pad,y=95;
+ const itemW=it=>it.type==='lentille'?12:it.type==='pois'?7:it.type==='letter'?34:it.type==='motif'?Math.max(30,it.mm*scale):Math.max(28,it.mm*scale);
+ const total=120 + d.items.reduce((a,it)=>a+itemW(it)+4,0)+110; cvs.width=Math.max(900,total);cvs.height=235;ctx.clearRect(0,0,cvs.width,cvs.height);ctx.fillStyle='#fffdfc';ctx.fillRect(0,0,cvs.width,cvs.height);
+ ctx.fillStyle='#8d5e59';ctx.font='bold 18px Arial';ctx.fillText('Baby Sweety\'s — aperçu de la création',pad,28);
+ // clip
+ ctx.save();ctx.translate(x+38,y);ctx.fillStyle=colorHex[d.clip]||'#d8b7ad';ctx.beginPath();ctx.arc(0,0,32,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#b8b8b8';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(28,0);ctx.lineTo(55,0);ctx.stroke();ctx.restore();x+=95;
+ for(const it of d.items){const w=itemW(it),cx=x+w/2;
+  if(it.type==='letter'){ctx.fillStyle='#fff';ctx.strokeStyle='#ddd';ctx.lineWidth=1.5;roundRect(ctx,x,y-17,w,34,6,true,true);ctx.fillStyle=d.style==='dorées'?'#b17813':'#111';ctx.font='bold 18px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(it.char,cx,y);ctx.textAlign='left';}
+  else if(it.type==='motif'){ctx.font=`${Math.max(22,w*.65)}px Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(it.motif[2],cx,y);ctx.textAlign='left';}
+  else if(it.type==='lentille'||it.type==='pois'){ctx.fillStyle=colorHex[it.color]||'#d8b7ad';roundRect(ctx,x,y-16,w,32,Math.min(8,w/2),true,false);}
+  else if(it.type==='hex'){ctx.fillStyle=colorHex[it.color]||'#d8b7ad';const r=w/2;ctx.beginPath();for(let k=0;k<6;k++){const a=Math.PI/3*k;const px=cx+r*.95*Math.cos(a),py=y+r*.95*Math.sin(a);k?ctx.lineTo(px,py):ctx.moveTo(px,py)}ctx.closePath();ctx.fill();}
+  else {ctx.fillStyle=colorHex[it.color]||'#d8b7ad';ctx.beginPath();ctx.arc(cx,y,w/2,0,Math.PI*2);ctx.fill();}
+  x+=w+4;
+ }
+ // loop
+ ctx.strokeStyle=colorHex[d.fil]||'#ddd';ctx.lineWidth=4;ctx.beginPath();ctx.ellipse(x+45,y,42,18,0,0,Math.PI*2);ctx.stroke();
+ ctx.fillStyle='#6b4a45';ctx.font='14px Arial';ctx.fillText(`Code : ${d.raw}`,pad,162);ctx.fillText(`Clip : ${d.clip}   •   Fil : ${d.fil}   •   ${d.len} mm / 170 mm`,pad,184);
+ ctx.fillText(`Adaptateur(s) MAM : ${d.mam}   •   Prix total : ${d.price.toFixed(2).replace('.',',')} €`,pad,205);
+}
+function roundRect(ctx,x,y,w,h,r,fill,stroke){if(w<2*r)r=w/2;if(h<2*r)r=h/2;ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();if(fill)ctx.fill();if(stroke)ctx.stroke();}
+function downloadImage(){if(!lastDecoded)return;const a=document.createElement('a');a.download=`creation-${lastDecoded.raw}.png`;a.href=document.getElementById('previewCanvas').toDataURL('image/png');a.click();}
+</script></body></html>
