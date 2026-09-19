@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ma boule de Noël personnalisée — Baby Sweety's</title>
+<style>
+:root{--rose:#cf7379;--rose2:#e9a4a4;--cream:#fff8f5;--beige:#f3dfd5;--text:#7f3734;--line:#efd0c5}
+*{box-sizing:border-box} body{margin:0;background:#fff1eb;color:var(--text);font-family:Arial,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:22px}.hero{text-align:center;padding:8px 0 22px}
+.hero h1{font-family:cursive;font-size:42px;margin:0;color:#a74e4d}.hero p{font-size:18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 8px 28px #c98b7c18}
+h2{font-size:20px;margin:0 0 14px}.num{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--rose);color:#fff;margin-right:10px}
+.colors{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}.choice{border:2px solid transparent;border-radius:12px;padding:6px;text-align:center;cursor:pointer;background:#fff}
+.choice.active{border-color:var(--rose)}.ball{width:48px;height:48px;border-radius:50%;margin:auto;box-shadow:inset -9px -8px 13px #0003,inset 8px 7px 10px #fff7,0 3px 6px #0002}.choice small{display:block;margin-top:6px}
+.models{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.model{height:104px;border-radius:12px;background:#fff;border:2px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}.model.active{border-color:var(--rose)}
+.mini{width:55px;height:55px;border-radius:50%;background:#b80d25;color:white;display:grid;place-items:center;font-family:cursive;font-size:17px;box-shadow:inset -8px -7px 10px #0003}.model span{font-size:13px;margin-top:7px}
+input{width:100%;padding:14px;border:1px solid #e1c1b7;border-radius:10px;font-size:18px}.fontnote{font-size:13px;margin-top:8px}.name-demo{font-family:cursive;font-size:38px;text-align:center;margin-top:6px}
+.preview{position:sticky;top:10px}.scene{height:520px;border-radius:18px;background:radial-gradient(circle at 80% 25%,#fff8 0 3%,transparent 4%),linear-gradient(135deg,#29462e,#6f5a35 55%,#d4b678);display:grid;place-items:center;overflow:hidden;position:relative}
+.string{position:absolute;top:0;width:3px;height:115px;background:#d7b77a}.cap{position:absolute;top:103px;width:55px;height:32px;background:linear-gradient(90deg,#a98237,#f0d18a,#9c762e);border-radius:5px}
+.bigball{width:300px;height:300px;border-radius:50%;background:#c20d28;box-shadow:inset -55px -45px 60px #65001588,inset 40px 30px 45px #fff5,0 20px 35px #0005;display:grid;place-items:center;color:#fff;position:relative}
+.previewname{font-family:cursive;font-size:64px;z-index:2}.decor{position:absolute;inset:0;display:grid;place-items:center;font-size:38px;letter-spacing:24px;pointer-events:none}
+.code{font-size:17px;background:#fff;border:1px solid #dcc5bd;border-radius:10px;padding:14px;text-align:center;word-break:break-all}
+button{width:100%;border:0;border-radius:10px;padding:15px;font-size:18px;margin-top:12px;cursor:pointer}.copy{background:var(--rose);color:white}.order{background:#bbb;color:white}.order.ready{background:#9d5557;cursor:pointer}.warning{text-align:center;font-size:13px;margin-top:10px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.preview{position:static}.colors{grid-template-columns:repeat(4,1fr)}.scene{height:390px}.bigball{width:245px;height:245px}.previewname{font-size:52px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero"><h1>Ma boule de Noël personnalisée ♡</h1><p>Créez une décoration unique pour un Noël encore plus magique !</p></div>
+<div class="grid">
+<section>
+<div class="card"><h2><b class="num">1</b>Choisissez la couleur de votre boule</h2><div class="colors" id="colors"></div></div>
+<div class="card"><h2><b class="num">2</b>Choisissez votre modèle</h2>
+<div class="models">
+<div class="model active" data-model="Simple"><div class="mini">Emma</div><span>Simple</span></div>
+<div class="model" data-model="Étoiles"><div class="mini">★ Emma ★</div><span>Étoiles</span></div>
+<div class="model" data-model="Traîneau Père Noël"><div class="mini">🦌</div><span>Traîneau Père Noël</span></div>
+<div class="model" data-model="Cerf"><div class="mini">♧</div><span>Cerf</span></div>
+</div></div>
+<div class="card"><h2><b class="num">3</b>Indiquez le prénom</h2><input id="name" maxlength="30" value="Emma"><div class="fontnote">Écriture Anastasia</div><div class="name-demo" id="demo">Emma</div></div>
+<div class="card"><h2><b class="num">4</b>Votre aperçu se met à jour en direct</h2><p>Un rendu fidèle à votre création ♡</p></div>
+</section>
+<section class="preview">
+<div class="scene"><div class="string"></div><div class="cap"></div><div class="bigball" id="bigball"><div class="decor" id="decor"></div><div class="previewname" id="previewname">Emma</div></div></div>
+<div class="card">
+<h2>Votre code de personnalisation</h2><div class="code" id="code"></div>
+<button class="copy" id="copy">▣ Copier mon code</button>
+<button class="order" id="order" disabled>🛒 Valider ma commande</button>
+<div class="warning" id="warning">⚠️ Copiez votre code de personnalisation avant de poursuivre.<br>Il vous sera demandé à l'étape suivante.</div>
+</div>
+</section>
+</div></div>
+<script>
+const palette=[
+["Blanc","#f6f4ef"],["Beige","#d9c3aa"],["Doré","#d6a21c"],["Argent","#bfc2c6"],["Rose","#e8a6b6"],["Vieux rose","#b76f6d"],["Pêche","#efad91"],
+["Rouge","#c20d28"],["Bordeaux","#8f0028"],["Marron","#6b3828"],["Camel","#a8793f"],["Lilas","#ad92d2"],["Bleu ciel","#52a6d8"],["Bleu roi","#063aa2"],
+["Bleu nuit","#071e55"],["Vert","#4c7d58"],["Vert sapin","#174b2d"],["Olive","#77833c"],["Chocolat","#522319"],["Cuivré","#9b4c23"],["Fushia","#d41472"]
+];
+let color=palette[7], model="Simple", copied=false;
+const colors=document.getElementById("colors");
+const nameInput=document.getElementById("name");
+palette.forEach((p,i)=>{let d=document.createElement("div");d.className="choice"+(i===7?" active":"");d.innerHTML=`<div class="ball" style="background:${p[1]}"></div><small>${p[0]}</small>`;d.onclick=()=>{document.querySelectorAll(".choice").forEach(x=>x.classList.remove("active"));d.classList.add("active");color=p;copied=false;update()};colors.appendChild(d)});
+document.querySelectorAll(".model").forEach(d=>d.onclick=()=>{document.querySelectorAll(".model").forEach(x=>x.classList.remove("active"));d.classList.add("active");model=d.dataset.model;copied=false;update()});
+nameInput.addEventListener("input",()=>{copied=false;update()});
+function update(){
+ let n=nameInput.value.trim()||"Votre prénom"; previewname.textContent=n; demo.textContent=n; bigball.style.background=color[1];
+ decor.textContent=model==="Étoiles"?"★   ★   ★":model==="Traîneau Père Noël"?"🦌  🛷":model==="Cerf"?"♧   ♧":"";
+ let clean=n.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Z0-9]/g,"");
+ code.textContent=`BS-NOEL-${color[0].toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s/g,"-")}-${model.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s/g,"-")}-${clean}`;
+ order.disabled=true;order.classList.remove("ready");warning.style.display="block";
+}
+copy.onclick=async()=>{try{await navigator.clipboard.writeText(code.textContent)}catch(e){} copied=true;copy.textContent="✓ Code copié";order.disabled=false;order.classList.add("ready");warning.style.display="none"};
+order.onclick=()=>{if(copied) alert("Le bouton est déverrouillé. On ajoutera ici le lien exact vers ta fiche produit Webador.")};
+update();
+</script>
+</body></html>
