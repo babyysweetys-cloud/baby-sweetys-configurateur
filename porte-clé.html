@@ -294,12 +294,12 @@ async function validate(){
  };
 
  try{
-   const response=await fetch(BABY_SWEETYS_API,{
+   const response=await fetch(BABY_SWEETYS_API+'/creation',{
      method:'POST',
      headers:{'Content-Type':'application/json'},
      body:JSON.stringify({
-       produit:'PC',
-       charge_utile:chargeUtile
+       product:'PC',
+       payload:chargeUtile
      })
    });
 
