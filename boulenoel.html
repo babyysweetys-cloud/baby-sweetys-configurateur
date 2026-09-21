@@ -427,7 +427,7 @@ document.getElementById("copy").onclick=async()=>{
    boules:CART.map((x,i)=>({numero:i+1,prenom:x.name,couleur:x.color,modele:x.model,couleur_prenom:x.nameColor}))
  };
  try{
-   const response=await fetch(BABY_SWEETYS_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({produit:'BN',charge_utile:chargeUtile})});
+   const response=await fetch(BABY_SWEETYS_API+'/creation',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product:'BN',payload:chargeUtile})});
    let data=null; try{data=await response.json()}catch(e){}
    if(!response.ok)throw new Error((data&&(data.error||data.message))||('Erreur HTTP '+response.status));
    const ref=(data&&(data.reference||data.ref||data.id))||'';
