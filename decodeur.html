@@ -125,17 +125,28 @@ async function decodePorteCle(raw){
 function drawPorteCle(p,ref){
  const cvs=document.getElementById('pcCanvas'); if(!cvs)return;
  const ctx=cvs.getContext('2d'); const strands=p.brins||p.strands||[]; const ring=p.anneau||p.ring||'Rose gold';
- const W=Math.max(1000,760+Math.max(0,...strands.map(st=>(st.elements||st.items||[]).length))*54); const H=Math.max(360,150+strands.length*92);
+ const maxItems=Math.max(0,...strands.map(st=>(st.elements||st.items||[]).length));
+ const W=Math.max(1100,720+maxItems*58);
+ // On réserve volontairement assez de hauteur pour 4 brins, même si la commande n'en a qu'un.
+ const H=620;
  cvs.width=W;cvs.height=H;ctx.clearRect(0,0,W,H);
  const bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#fffdfb');bg.addColorStop(1,'#f8eee9');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
  ctx.fillStyle='#8d5e59';ctx.font='bold 22px Georgia';ctx.fillText('Baby Sweety\'s — aperçu de fabrication',28,34);
  ctx.fillStyle='#846b66';ctx.font='14px Arial';ctx.fillText('Référence : '+ref,28,58);
- const rx=120,ry=H/2; drawPcRing(ctx,rx,ry,ring);
- strands.forEach((st,si)=>{const items=st.elements||st.items||[];const gap=72;const sy=ry+(si-(strands.length-1)/2)*gap;let x=190;
-   ctx.strokeStyle='#c7b0aa';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(rx+42,ry+(si-(strands.length-1)/2)*8);ctx.quadraticCurveTo(165,sy,x,sy);ctx.stroke();
+ const rx=125,ry=H/2; drawPcRing(ctx,rx,ry,ring);
+ const count=Math.max(1,strands.length);
+ const spread=count===1?0:Math.min(250,105*(count-1));
+ strands.forEach((st,si)=>{
+   const items=st.elements||st.items||[];
+   const offset=count===1?0:(si-(count-1)/2)*(spread/(count-1));
+   const sy=ry+offset;
+   let x=205;
+   ctx.strokeStyle='#c7b0aa';ctx.lineWidth=3;ctx.beginPath();
+   ctx.moveTo(rx+42,ry+(count===1?0:offset*.12));
+   ctx.quadraticCurveTo(172,ry+offset*.55,x,sy);ctx.stroke();
    items.forEach(it=>{const w=drawPcItem(ctx,it,x,sy);x+=w+5;});
    ctx.strokeStyle='#c7b0aa';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,sy);ctx.lineTo(x+28,sy);ctx.stroke();
-   ctx.fillStyle='#846b66';ctx.font='12px Arial';ctx.fillText('Brin '+(si+1),190,sy-30);
+   ctx.fillStyle='#846b66';ctx.font='12px Arial';ctx.fillText('Brin '+(si+1),205,sy-31);
  });
 }
 function pcColor(name){const m={'Rose':'#efb1bf','Blush':'#e9b7ad','Beige':'#d7b99c','Blanc':'#f8f8f5','Gris':'#aaa','Menthe':'#9fd7c9',"Bleu d’eau":'#9fd7df',"Bleu d\'eau":'#9fd7df','Bleu poudré':'#a9c5df','Moutarde':'#d3ad52','Olive':'#929469','Marron':'#916d55','Chocolat':'#5e443a'};return m[name]||colorHex[name]||'#d9b7ad'}
