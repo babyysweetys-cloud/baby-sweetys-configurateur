@@ -278,6 +278,7 @@ button{width:100%;border:0;border-radius:10px;padding:14px;font-weight:bold;font
       <button class="order" id="order" disabled>🛒 Valider toute ma commande</button>
     </div>
     <div class="warn" id="orderMsg">Ajoutez toutes vos boules, puis générez votre référence courte avant de valider la commande.</div>
+    <div id="paymentWarning" style="display:none;margin-top:12px;padding:14px 16px;border-radius:14px;background:#fff4ef;border:1px solid #e4c6bb;color:#6d504b;line-height:1.45;text-align:center"></div>
    </div>
   </div>
  </div>
@@ -445,7 +446,14 @@ document.getElementById("copy").onclick=async()=>{
 };
 document.getElementById("order").onclick=()=>{
  if(!window.savedOrderReference)return;
- alert("Votre référence "+window.savedOrderReference+" est copiée. Il restera à relier ce bouton à la page produit Webador pour finaliser toute la commande en une seule fois.");
+ const qty=CART.length;
+ const plural=qty>1?"boules":"boule";
+ const message="⚠️ ATTENTION AVANT DE PASSER AU PAIEMENT\n\nVous avez personnalisé "+qty+" "+plural+".\n\nAu moment du paiement, veuillez indiquer une quantité de "+qty+". Le nombre de boules payées doit être identique au nombre de boules personnalisées, sinon votre commande ne pourra pas être validée.\n\nRéférence : "+window.savedOrderReference+"\n\nAppuyez sur OK pour accéder au paiement.";
+ const warning=document.getElementById("paymentWarning");
+ if(warning)warning.innerHTML="⚠️ <b>Attention avant de passer au paiement</b><br>Vous avez personnalisé <b>"+qty+" "+plural+"</b>. Sur la page produit, sélectionnez une <b>quantité de "+qty+"</b>. Le nombre de boules payées doit être identique au nombre de boules personnalisées, sinon votre commande ne pourra pas être validée.";
+ if(confirm(message)){
+   window.open('https://www.baby-sweetys.fr/product/24275046/boule-de-noel-personnalise','_top');
+ }
 };
 renderCart();
 loadStock();
