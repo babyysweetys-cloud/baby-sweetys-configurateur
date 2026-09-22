@@ -1,62 +1,20 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gestion du stock – Baby Sweety's</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#ffede6;color:#654e49;font-family:Arial,sans-serif}main{max-width:700px;margin:auto;padding:22px 14px 50px}h1{font-family:Georgia,serif;text-align:center;margin-bottom:6px}.sous-titre{text-align:center;color:#8b716b;margin-bottom:25px}.carte{background:white;border:1px solid #ead9d2;border-radius:20px;padding:14px;box-shadow:0 8px 24px #b4530124}.rangee{display:grid;grid-template-columns:1fr 44px 74px 44px;gap:7px;align-items:center;padding:9px 0;border-bottom:1px solid #f2e7e2}.rangee:last-child{border-bottom:0}.nom{font-weight:700}button{height:42px;border:0;border-radius:10px;background:#f1dfd8;color:#654e49;font-size:20px;font-weight:bold;cursor:pointer}input{width:100%;height:42px;border:1px solid #ddccc5;border-radius:10px;text-align:center;font-size:17px;font-weight:bold}.save{display:block;width:100%;height:52px;margin-top:16px;border:0;border-radius:14px;background:#c77f82;color:white;font-size:16px;font-weight:bold}.save:disabled{opacity:.55}.status{text-align:center;min-height:24px;margin:12px 0;font-weight:bold}.note{text-align:center;font-size:13px;line-height:1.45;color:#8a746e;margin-top:12px}
-</style>
-</head>
-<body>
-<main>
-<h1>Gestion du stock 🎄</h1>
-<p class="sous-titre">Baby Sweety's · Boules de Noël</p>
-<div class="carte" id="liste"></div>
-<button class="save" id="save" type="button">Enregistrer le stock</button>
-<div class="status" id="status"></div>
-<p class="note">Tu peux laisser les quantités à 0 jusqu'à ton inventaire.<br>Les quantités seront enregistrées directement dans la base Baby Sweety's.</p>
-</main>
-<script>
+</style></head><body><main>
+<h1>Gestion du stock 🎄</h1><p class="sous-titre">Baby Sweety's · Boules de Noël</p>
+<div class="carte" id="liste"></div><button class="save" id="save" type="button">Enregistrer le stock</button>
+<div class="status" id="status"></div><p class="note">Tu peux laisser les quantités à 0 jusqu'à ton inventaire.<br>Les quantités seront enregistrées directement dans la base Baby Sweety's.</p>
+</main><script>
 const API='https://baby-sweetys-creations.babyysweetys.workers.dev/stock/boules';
 const COLORS=['Vert mat','Vert','Rouge mat','Rouge','Bordeaux mat','Bordeaux','Marron mat','Marron','Kaki mat','Kaki','Bleu mat','Bleu','Blush mat','Blush','Or mat','Or','Blanc'];
-const liste=document.getElementById('liste');
-const statusEl=document.getElementById('status');
-const saveBtn=document.getElementById('save');
-function render(){
- liste.innerHTML='';
- COLORS.forEach((couleur,i)=>{
-  const row=document.createElement('div'); row.className='rangee';
-  const nom=document.createElement('span'); nom.className='nom'; nom.textContent=couleur;
-  const moins=document.createElement('button'); moins.type='button'; moins.textContent='−';
-  const input=document.createElement('input'); input.type='number'; input.min='0'; input.step='1'; input.value='0'; input.id='q'+i; input.inputMode='numeric';
-  const plus=document.createElement('button'); plus.type='button'; plus.textContent='+';
-  moins.onclick=()=>{input.value=Math.max(0,(parseInt(input.value)||0)-1)};
-  plus.onclick=()=>{input.value=(parseInt(input.value)||0)+1};
-  row.append(nom,moins,input,plus); liste.appendChild(row);
- });
-}
-async function load(){
- statusEl.textContent='Chargement du stock…';
- try{
-  const r=await fetch(API,{cache:'no-store'}); const d=await r.json();
-  if(!r.ok||!d.success) throw new Error(d.error||'Erreur de chargement');
-  const stock=d.stock||d.payload||{};
-  COLORS.forEach((c,i)=>{document.getElementById('q'+i).value=Math.max(0,Number(stock[c]??0)||0)});
-  statusEl.textContent='Stock chargé ✓';
- }catch(e){statusEl.textContent='Erreur de chargement : '+e.message}
-}
-saveBtn.onclick=async()=>{
- saveBtn.disabled=true; statusEl.textContent='Enregistrement…';
- const stock={}; COLORS.forEach((c,i)=>stock[c]=Math.max(0,parseInt(document.getElementById('q'+i).value)||0));
- try{
-  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({stock})}); const d=await r.json();
-  if(!r.ok||!d.success) throw new Error(d.error||'Erreur d’enregistrement');
-  statusEl.textContent='Stock enregistré ✓';
- }catch(e){statusEl.textContent='Erreur : '+e.message}
- finally{saveBtn.disabled=false}
-};
-render(); load();
-</script>
-</body>
-</html>
+const liste=document.getElementById('liste'),statusEl=document.getElementById('status'),saveBtn=document.getElementById('save');
+function render(){liste.innerHTML='';COLORS.forEach((couleur,i)=>{const row=document.createElement('div');row.className='rangee';const nom=document.createElement('span');nom.className='nom';nom.textContent=couleur;const moins=document.createElement('button');moins.type='button';moins.textContent='−';const input=document.createElement('input');input.type='number';input.min='0';input.step='1';input.value='0';input.id='q'+i;input.inputMode='numeric';const plus=document.createElement('button');plus.type='button';plus.textContent='+';moins.onclick=()=>input.value=Math.max(0,(parseInt(input.value)||0)-1);plus.onclick=()=>input.value=(parseInt(input.value)||0)+1;row.append(nom,moins,input,plus);liste.appendChild(row)})}
+async function load(){statusEl.textContent='Chargement du stock…';try{const r=await fetch(API,{cache:'no-store'}),d=await r.json();if(!r.ok||!d.success)throw new Error(d.error||'Erreur de chargement');const map={};(Array.isArray(d.stock)?d.stock:[]).forEach(a=>{if(a&&a.couleur)map[a.couleur]=Math.max(0,Number(a.quantite)||0)});COLORS.forEach((c,i)=>document.getElementById('q'+i).value=map[c]??0);statusEl.textContent='Stock chargé ✓'}catch(e){statusEl.textContent='Erreur de chargement : '+e.message}}
+saveBtn.onclick=async()=>{saveBtn.disabled=true;statusEl.textContent='Enregistrement…';const stock=COLORS.map((couleur,i)=>({couleur,quantite:Math.max(0,parseInt(document.getElementById('q'+i).value,10)||0)}));try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({stock})}),d=await r.json();if(!r.ok||!d.success)throw new Error(d.error||'Erreur d’enregistrement');statusEl.textContent='Stock enregistré ✓'}catch(e){statusEl.textContent='Erreur : '+e.message}finally{saveBtn.disabled=false}};
+render();load();
+</script></body></html>
