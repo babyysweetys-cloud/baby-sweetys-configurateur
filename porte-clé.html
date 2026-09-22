@@ -345,7 +345,15 @@ async function copyReference(){
 function continueToOrder(){
  const ref=window.savedReference||'';
  if(!ref){alert('Validez d’abord votre création.');return;}
- window.location.href='https://www.baby-sweetys.fr/product/24277798/porte-cle';
+
+ const productUrls={
+   1:'https://www.baby-sweetys.fr/product/24277798/porte-cle-1-brin',
+   2:'https://www.baby-sweetys.fr/product/24280043/porte-cle-2-brins',
+   3:'https://www.baby-sweetys.fr/product/24280045/porte-cle-3-brins',
+   4:'https://www.baby-sweetys.fr/product/24280049/porte-cle-4-brins'
+ };
+ const strandCount=Math.max(1,Math.min(4,state.strands.length));
+ window.location.href=productUrls[strandCount];
 }
 
 async function validate(){
