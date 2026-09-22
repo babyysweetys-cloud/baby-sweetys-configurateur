@@ -28,6 +28,8 @@ background-repeat:no-repeat;mix-blend-mode:multiply}.strands{position:absolute;l
 
 #validateBtn:disabled,#addNameBtn:disabled{opacity:.5;cursor:not-allowed}
 #copyCodeBtn{margin-top:7px}
+#orderBtn:disabled{background:#d7d2d2!important;color:#8d8787!important;opacity:1!important;cursor:not-allowed!important;box-shadow:none!important}
+#orderBtn:not(:disabled){background:var(--rose)!important;color:white!important;cursor:pointer!important}
 
 @media(max-width:650px){
   .preview{height:390px !important;min-height:390px !important;}
@@ -100,6 +102,7 @@ background-repeat:no-repeat;mix-blend-mode:multiply}.strands{position:absolute;l
      <b>Référence de création</b>
      <div class="code compactCode" id="code">Elle sera créée automatiquement à la validation.</div>
      <button class="btn" id="copyCodeBtn" onclick="copyReference()" style="display:none">📋 Copier la référence</button>
+     <button class="btn primary" id="orderBtn" onclick="continueToOrder()" style="display:none" disabled>Continuer vers ma commande →</button>
      <div id="copyMsg" style="font-size:11px;margin-top:5px;color:#76595b">Terminez votre création puis appuyez sur « Valider ma création ».</div>
    </div>
    <button class="btn primary" id="validateBtn" onclick="validate()">🛒 Valider ma création</button>
@@ -334,7 +337,15 @@ async function copyReference(){
    ta.select();document.execCommand('copy');ta.remove();
  }
  const cm=document.getElementById('copyMsg');
- if(cm)cm.textContent='✓ Référence copiée : '+ref;
+ if(cm)cm.textContent='✓ Référence copiée : '+ref+' — vous pouvez continuer vers votre commande.';
+ const ob=document.getElementById('orderBtn');
+ if(ob){ob.disabled=false;ob.style.display='inline-block';}
+}
+
+function continueToOrder(){
+ const ref=window.savedReference||'';
+ if(!ref){alert('Validez d’abord votre création.');return;}
+ window.location.href='https://www.baby-sweetys.fr/product/24277798/porte-cle';
 }
 
 async function validate(){
@@ -389,8 +400,11 @@ async function validate(){
    document.getElementById('code').textContent=ref;
    const cb=document.getElementById('copyCodeBtn');
    if(cb)cb.style.display='inline-block';
-   if(cm)cm.textContent='✓ Création enregistrée. Conservez cette référence.';
-   alert('Création enregistrée !\\n\\nRéférence : '+ref);
+   if(cm)cm.textContent='✓ Création enregistrée. Copiez la référence avant de continuer.';
+   const ob=document.getElementById('orderBtn');
+   if(ob){ob.style.display='inline-block';ob.disabled=true;}
+   // Pas de fenêtre bloquante : la référence et les boutons apparaissent directement ci-dessous.
+   document.getElementById('code').scrollIntoView({behavior:'smooth',block:'center'});
  }catch(error){
    console.error(error);
    if(cm)cm.textContent='Impossible d’enregistrer pour le moment. Réessayez.';
