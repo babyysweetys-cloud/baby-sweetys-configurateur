@@ -302,9 +302,10 @@ const renderColors={
 "Or mat":"#ae8a47","Or":"#d6a20c",
 "Blanc":"#f4f3ef"
 }
-// Stock de secours : utilisé si stock.json n'est pas accessible (ex. ouverture locale).
-// Sur GitHub Pages, le configurateur lit automatiquement stock.json.
-let STOCK={"Vert mat":10,"Vert":10,"Rouge mat":10,"Rouge":10,"Bordeaux mat":10,"Bordeaux":10,"Marron mat":10,"Marron":10,"Kaki mat":10,"Kaki":10,"Bleu mat":10,"Bleu":10,"Blush mat":10,"Blush":10,"Or mat":10,"Or":10,"Blanc":10};
+// Stock réel : lu directement dans la base Baby Sweety's via le Worker Cloudflare.
+const STOCK_API='https://baby-sweetys-creations.babyysweetys.workers.dev/stock/boules';
+// Par sécurité, tout est indisponible tant que le stock réel n'a pas été chargé.
+let STOCK={"Vert mat":0,"Vert":0,"Rouge mat":0,"Rouge":0,"Bordeaux mat":0,"Bordeaux":0,"Marron mat":0,"Marron":0,"Kaki mat":0,"Kaki":0,"Bleu mat":0,"Bleu":0,"Blush mat":0,"Blush":0,"Or mat":0,"Or":0,"Blanc":0};
 function stockQty(name){const n=Number(STOCK[name]);return Number.isFinite(n)?Math.max(0,Math.floor(n)):0}
 function stockLabel(q){return ''}
 
@@ -330,9 +331,19 @@ function renderColorChoices(){
 }
 async function loadStock(){
  try{
-  const r=await fetch('./stock.json?ts='+Date.now(),{cache:'no-store'});
-  if(r.ok){const data=await r.json(); if(data && typeof data==='object') STOCK={...STOCK,...data};}
- }catch(e){}
+  const r=await fetch(STOCK_API+'?ts='+Date.now(),{cache:'no-store'});
+  const data=await r.json();
+  if(!r.ok || !data.success || !Array.isArray(data.stock)) throw new Error(data.error||'Stock indisponible');
+  const fresh={};
+  colorData.forEach(o=>fresh[o.name]=0);
+  data.stock.forEach(article=>{
+   const couleur=String(article.couleur||'').trim();
+   if(Object.prototype.hasOwnProperty.call(fresh,couleur)) fresh[couleur]=Math.max(0,parseInt(article.quantite,10)||0);
+  });
+  STOCK=fresh;
+ }catch(e){
+  console.error('Impossible de charger le stock réel :',e);
+ }
  // Si la couleur actuellement choisie est épuisée, sélectionner la première disponible.
  if(stockQty(state.color.name)<=0){const first=colorData.find(o=>stockQty(o.name)>0);if(first)state.color=first;}
  renderColorChoices(); update();
