@@ -1578,23 +1578,67 @@ document.addEventListener('DOMContentLoaded',function(){f();var c=document.getEl
 
 <script id="baby-sweetys-iframe-autoheight">
 (function(){
-  function sendHeight(){
-    var h = Math.max(
-      document.documentElement.scrollHeight,
-      document.body ? document.body.scrollHeight : 0
-    );
-    window.parent.postMessage({type:'baby-sweetys-height', height:h}, '*');
+  var lastHeight = 0;
+  var timer = null;
+
+  function getContentHeight(){
+    var app = document.querySelector('.app');
+    if (!app) return 0;
+
+    var rect = app.getBoundingClientRect();
+    var top = rect.top + window.scrollY;
+    var bottom = rect.bottom + window.scrollY;
+
+    // Cherche aussi le point le plus bas des éléments du configurateur,
+    // sans utiliser la hauteur imposée par l'iframe elle-même.
+    app.querySelectorAll('*').forEach(function(el){
+      var style = window.getComputedStyle(el);
+      if (style.position === 'fixed') return;
+      var r = el.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) return;
+      bottom = Math.max(bottom, r.bottom + window.scrollY);
+    });
+
+    return Math.ceil(bottom - top + 24);
   }
+
+  function sendHeight(){
+    clearTimeout(timer);
+    timer = setTimeout(function(){
+      var h = getContentHeight();
+      if (!h) return;
+      if (Math.abs(h - lastHeight) < 2) return;
+      lastHeight = h;
+      window.parent.postMessage({
+        type: 'baby-sweetys-height',
+        height: h
+      }, '*');
+    }, 40);
+  }
+
   window.addEventListener('load', sendHeight);
   window.addEventListener('resize', sendHeight);
   document.addEventListener('DOMContentLoaded', sendHeight);
+  document.addEventListener('click', function(){ setTimeout(sendHeight, 80); }, true);
+  document.addEventListener('input', function(){ setTimeout(sendHeight, 80); }, true);
+  document.addEventListener('change', function(){ setTimeout(sendHeight, 80); }, true);
+
   if ('ResizeObserver' in window) {
-    new ResizeObserver(sendHeight).observe(document.documentElement);
-  } else {
-    new MutationObserver(sendHeight).observe(document.documentElement,{subtree:true,childList:true,attributes:true});
+    var ro = new ResizeObserver(sendHeight);
+    var app = document.querySelector('.app');
+    if (app) ro.observe(app);
   }
-  setTimeout(sendHeight, 100);
-  setTimeout(sendHeight, 500);
+
+  new MutationObserver(sendHeight).observe(document.documentElement, {
+    subtree: true,
+    childList: true,
+    attributes: true,
+    attributeFilter: ['class', 'style', 'open']
+  });
+
+  [100, 300, 700, 1500].forEach(function(ms){
+    setTimeout(sendHeight, ms);
+  });
 })();
 </script>
 </body></html>
