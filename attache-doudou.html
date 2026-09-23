@@ -1575,6 +1575,28 @@ document.addEventListener('DOMContentLoaded',function(){f();var c=document.getEl
 })();
 </script>
 
+
+<script id="baby-sweetys-iframe-autoheight">
+(function(){
+  function sendHeight(){
+    var h = Math.max(
+      document.documentElement.scrollHeight,
+      document.body ? document.body.scrollHeight : 0
+    );
+    window.parent.postMessage({type:'baby-sweetys-height', height:h}, '*');
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  document.addEventListener('DOMContentLoaded', sendHeight);
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(sendHeight).observe(document.documentElement);
+  } else {
+    new MutationObserver(sendHeight).observe(document.documentElement,{subtree:true,childList:true,attributes:true});
+  }
+  setTimeout(sendHeight, 100);
+  setTimeout(sendHeight, 500);
+})();
+</script>
 </body></html>
 
 
