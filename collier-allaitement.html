@@ -562,4 +562,21 @@ window.addEventListener('resize',()=>render());
 })();
 </script>
 
-</body></html>
+<script>
+(function(){
+document.addEventListener('click',async function(e){
+ const b=e.target.closest('button');if(!b)return;
+ const l=(b.textContent||'').toLowerCase();
+ if(!l.includes('copier le code')||!l.includes('continuer'))return;
+ const el=document.getElementById('code'),c=(el&&el.textContent||'').trim();
+ if(!/^BS-CA-\d{4}-\d{3,}$/i.test(c))return;
+ e.preventDefault();e.stopImmediatePropagation();
+ let ok=false;
+ try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(c);ok=true}}catch(x){}
+ if(!ok){const t=document.createElement('textarea');t.value=c;t.style.position='fixed';t.style.left='-9999px';document.body.appendChild(t);t.select();try{ok=document.execCommand('copy')}catch(x){}t.remove()}
+ if(!ok){prompt("Copie ce code avant de continuer :",c);return}
+ b.textContent='✓ Code copié — continuer';
+ window.open('https://www.baby-sweetys.fr/product/24285492/collier-allaitement-portage','_top');
+},true);
+})();
+</script></body></html>
