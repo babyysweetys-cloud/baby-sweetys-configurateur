@@ -371,7 +371,7 @@ function show(type){
    g.appendChild(d);
  });
 }
-function validate(){
+async function validate(){
  if(seq.length){
    const first=seq[0], last=seq[seq.length-1];
    const allowed=x=>x && (x.type==='round12'||x.type==='round'||x.type==='hex');
@@ -380,7 +380,50 @@ function validate(){
      return;
    }
  }
-if(!seq.length){alert("Ajoute au moins une perle.");return}let raw=seq.map(x=>(x.type==='hex'?'H':'R')+'-'+x.name).join('|'),h=0;for(let i=0;i<raw.length;i++)h=(h*31+raw.charCodeAt(i))>>>0;document.getElementById('code').textContent='BSC-'+h.toString(36).toUpperCase()+'-'+seq.length;document.getElementById('result').style.display='block'}
+ if(!seq.length){alert("Ajoute au moins une perle.");return}
+
+ const result=document.getElementById('result');
+ const codeEl=document.getElementById('code');
+ result.style.display='block';
+ codeEl.textContent='Enregistrement…';
+
+ const payload={
+   produit:'collier-allaitement-portage',
+   type:'collier-allaitement-portage',
+   fil:(threadColor&&threadColor[0])?threadColor[0]:'',
+   sequence:seq.map(x=>({
+     type:x.type||'',
+     nom:x.name||'',
+     taille:x.type==='round12'?12:(x.type==='round'||x.type==='hex'?14:(x.type==='lentille'?5:(x.type==='pois'?2:(x.mm||null)))),
+     couleur:x.color||null
+   })),
+   elements:seq.map(x=>({
+     type:x.type||'',
+     nom:x.name||'',
+     taille:x.type==='round12'?12:(x.type==='round'||x.type==='hex'?14:(x.type==='lentille'?5:(x.type==='pois'?2:(x.mm||null)))),
+     couleur:x.color||null
+   })),
+   nombre:seq.length
+ };
+
+ try{
+   const r=await fetch('https://baby-sweetys-creations.babyysweetys.workers.dev/creation',{
+     method:'POST',
+     headers:{'Content-Type':'application/json'},
+     body:JSON.stringify({product:'CA',payload})
+   });
+   const data=await r.json();
+   if(!r.ok) throw new Error(data.error||'Enregistrement impossible');
+   const ref=data.reference||data.code||data.ref;
+   if(!ref) throw new Error("La référence n’a pas été renvoyée.");
+   codeEl.textContent=ref;
+ }catch(e){
+   console.error(e);
+   codeEl.textContent='';
+   result.style.display='none';
+   alert("Impossible d’enregistrer la création. Vérifie la connexion puis réessaie.");
+ }
+}
 async function copyCode(){let c=document.getElementById('code').textContent;try{await navigator.clipboard.writeText(c)}catch(e){}}
 show('round');renderThreads();document.getElementById('cordGuide').style.stroke=threadColor[1];render();
 window.addEventListener('resize',()=>render());
@@ -403,7 +446,7 @@ window.addEventListener('resize',()=>render());
     const raw='FIL-'+fil+'|'+seq.map(function(x){return (x.type||'X')+'-'+x.name;}).join('|');
     let h=0;
     for(let i=0;i<raw.length;i++) h=(h*31+raw.charCodeAt(i))>>>0;
-    codeEl.textContent='BSC-'+h.toString(36).toUpperCase()+'-'+seq.length;
+    codeEl.textContent=document.getElementById('code').textContent||'';
     area.style.display='block';
     status.textContent='Copie obligatoirement ce code pour continuer vers la fiche produit.';
   });
@@ -471,6 +514,51 @@ window.addEventListener('resize',()=>render());
   }
   // Existing V20c scripts have already executed by the time this final script runs.
   attachBridge();
+})();
+</script>
+
+
+<script>
+(function(){
+  function init(){
+    const code=document.getElementById('code');
+    const result=document.getElementById('result');
+    if(!code||!result)return;
+
+    function hook(){
+      const buttons=[...result.querySelectorAll('button')];
+      const btn=buttons.find(b=>(b.textContent||'').toLowerCase().includes('copier'));
+      if(!btn||btn.dataset.bsRedirect==='1')return;
+      btn.dataset.bsRedirect='1';
+      btn.textContent='📋 Copier le code et continuer';
+      btn.removeAttribute('onclick');
+
+      btn.addEventListener('click',async function(){
+        const c=(code.textContent||'').trim();
+        if(!c)return;
+        let ok=false;
+        try{await navigator.clipboard.writeText(c);ok=true;}
+        catch(e){
+          const ta=document.createElement('textarea');
+          ta.value=c;ta.style.position='fixed';ta.style.opacity='0';
+          document.body.appendChild(ta);ta.select();
+          try{ok=document.execCommand('copy')}catch(_){ok=false}
+          ta.remove();
+        }
+        if(ok){
+          btn.textContent='✓ Code copié — redirection…';
+          setTimeout(function(){window.top.location.href='https://www.baby-sweetys.fr/product/24285492/collier-allaitement-portage';},400);
+        } else {
+          alert("Le code n’a pas pu être copié. Réessaie.");
+        }
+      });
+    }
+
+    new MutationObserver(hook).observe(result,{childList:true,subtree:true,attributes:true});
+    hook();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+  else init();
 })();
 </script>
 
