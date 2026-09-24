@@ -505,7 +505,7 @@ Longueur maximale : <b>22 cm (220 mm)</b> entre les deux clips.
 <div class='orderStep'><b>1. Copie ton code de création ci-dessous.</b><br><span class='note'>Il contient tous les détails de ton attache-doudou.</span></div>
 <div>Ton code de création :</div><div id='creationCode' class='creationCode'></div>
 <div id='creationSummary' class='creationSummary'></div>
-<button class='btn primary' style='margin-top:12px' onclick='copyCreationCode()'>📋 Copier mon code de création</button><div id='copyOk' class='copyOk'></div>
+<button class='btn primary' style='margin-top:12px' onclick='copyCreationCode()'>📋 Copier mon code de création</button><div id='copyOk' class='copyOk'></div><a id='orderBtn' href='https://www.baby-sweetys.fr/product/24304823/attache-doudou' target='_top' class='btn primary' style='margin-top:12px;display:none;text-align:center;text-decoration:none;'>🛒 Continuer vers ma commande</a>
 <div class='orderStep'><b>2. Continue ensuite ta commande sur la fiche produit Baby Sweety’s.</b></div>
 <div class='orderStep'><b>3. Colle ton code dans la case « Code de création »</b>, puis ajoute ton attache-doudou au panier.</div>
 <div class='warningCopy'>⚠️ Ne ferme pas cette page avant d’avoir copié ton code.</div></div></div><p class='note'>Ta cr&#233;ation sera r&#233;alis&#233;e selon les choix affich&#233;s dans l&#8217;aper&#231;u.</p></div></div><script>
@@ -1000,7 +1000,7 @@ document.getElementById('copyOk').textContent='';
 document.getElementById('creationResult').classList.add('show');
 document.getElementById('creationResult').scrollIntoView({behavior:'smooth',block:'center'})
 }
-async function copyCreationCode(){if(!window.currentCreationCode)return;try{await navigator.clipboard.writeText(window.currentCreationCode);document.getElementById('copyOk').textContent='✓ Code copié !'}catch(e){const ta=document.createElement('textarea');ta.value=window.currentCreationCode;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();document.getElementById('copyOk').textContent='✓ Code copié !'}}
+async function copyCreationCode(){if(!window.currentCreationCode)return;try{await navigator.clipboard.writeText(window.currentCreationCode);}catch(e){const ta=document.createElement('textarea');ta.value=window.currentCreationCode;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}document.getElementById('copyOk').textContent='✓ Code copié !';const orderBtn=document.getElementById('orderBtn');if(orderBtn)orderBtn.style.display='block';}
 
 window.addEventListener('message',function(e){
   if(!e.data)return;
