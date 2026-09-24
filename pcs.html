@@ -58,7 +58,17 @@ document.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{S.personal=b.dat
 q("prenom").oninput=e=>{S.name=e.target.value;draw();dirty()};q("size").oninput=e=>{S.size=+e.target.value;draw();dirty()};q("rot").oninput=e=>{S.rot=+e.target.value;draw();dirty()};
 document.querySelectorAll(".move button").forEach(b=>b.onclick=()=>{S.x+=+b.dataset.x;S.y+=+b.dataset.y;draw();dirty()});
 let dragging=false,lx=0,ly=0;const ne=q("name");ne.onpointerdown=e=>{dragging=true;lx=e.clientX;ly=e.clientY;try{ne.setPointerCapture(e.pointerId)}catch(_){}};ne.onpointermove=e=>{if(!dragging)return;S.x+=e.clientX-lx;S.y+=e.clientY-ly;lx=e.clientX;ly=e.clientY;draw()};ne.onpointerup=()=>{dragging=false;dirty()};ne.onpointercancel=()=>dragging=false;
-q("generate").onclick=()=>{let nm=(S.name.trim()||"SANS").toUpperCase();q("code").textContent="BS-PC-"+S.model+"-"+(S.personal?nm:"NP")+"-C"+S.flock+"-X"+Math.round(S.x)+"Y"+Math.round(S.y)+"S"+S.size+"R"+S.rot;q("codeRow").classList.add("show")};
+q("generate").onclick=()=>{let nm=(S.name.trim()||"SANS");
+let scene=q("name").parentElement;
+let sceneRect=scene.getBoundingClientRect();
+let imgRect=q("product").getBoundingClientRect();
+let nameRect=q("name").getBoundingClientRect();
+let cx=nameRect.left+nameRect.width/2;
+let cy=nameRect.top+nameRect.height/2;
+let rx=((cx-imgRect.left)/Math.max(imgRect.width,1))*100;
+let ry=((cy-imgRect.top)/Math.max(imgRect.height,1))*100;
+let rw=(nameRect.width/Math.max(imgRect.width,1))*100;
+q("code").textContent="BS-PCS3-"+S.model+"-"+(S.personal?nm:"NP")+"-C"+S.flock+"-PX"+rx.toFixed(2)+"PY"+ry.toFixed(2)+"W"+rw.toFixed(2)+"R"+S.rot;q("codeRow").classList.add("show")};
 q("copy").onclick=async()=>{let v=q("code").textContent;if(!v)return;try{await navigator.clipboard.writeText(v)}catch(_){let ta=document.createElement("textarea");ta.value=v;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove()}q("cart").disabled=false;q("cart").classList.add("ready");q("status").textContent="✓ Code copié — vous pouvez ajouter au panier."};
 q("cart").onclick=()=>{window.location.href="https://www.baby-sweetys.fr/product/24286696/protege-carnet-de-sante";};
 renderModels();renderFlocks();draw();
