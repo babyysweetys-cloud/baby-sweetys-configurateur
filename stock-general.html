@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gestion des stocks – Baby Sweety's</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#ffede6;color:#654e49;font-family:Arial,sans-serif}
+main{max-width:820px;margin:auto;padding:22px 14px 50px}
+h1{font-family:Georgia,serif;text-align:center;margin:4px 0 6px}
+.sous-titre{text-align:center;color:#8b716b;margin-bottom:20px}
+.tabs{display:flex;gap:8px;margin-bottom:14px;position:sticky;top:0;background:#ffede6;padding:8px 0;z-index:5}
+.tab{flex:1;border:0;border-radius:13px;padding:13px 8px;background:#ead9d2;color:#654e49;font-weight:800;cursor:pointer}
+.tab.active{background:#c77f82;color:#fff}
+.panel{display:none}.panel.active{display:block}
+.group{background:#fff;border:1px solid #ead9d2;border-radius:18px;margin:10px 0;overflow:hidden;box-shadow:0 6px 18px #b4530115}
+.groupBtn{width:100%;border:0;background:#f9efec;color:#654e49;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:800;cursor:pointer}
+.groupBody{display:none;padding:6px 14px 10px}.group.open .groupBody{display:block}
+.rangee{display:grid;grid-template-columns:minmax(0,1fr) 42px 70px 42px;gap:7px;align-items:center;padding:8px 0;border-bottom:1px solid #f2e7e2}
+.rangee:last-child{border-bottom:0}.nom{font-weight:700;font-size:14px;overflow-wrap:anywhere}
+.qtybtn{height:40px;border:0;border-radius:10px;background:#f1dfd8;color:#654e49;font-size:20px;font-weight:bold;cursor:pointer}
+input{width:100%;height:40px;border:1px solid #ddccc5;border-radius:10px;text-align:center;font-size:16px;font-weight:bold}
+.save{display:block;width:100%;height:50px;margin-top:14px;border:0;border-radius:14px;background:#c77f82;color:white;font-size:16px;font-weight:bold;cursor:pointer}
+.save:disabled{opacity:.55}
+.status{text-align:center;min-height:24px;margin:10px 0;font-weight:bold}
+.note{text-align:center;font-size:13px;line-height:1.45;color:#8a746e;margin:12px 0}
+.badge{display:inline-block;font-size:11px;background:#fff3f5;color:#9b5361;border-radius:999px;padding:4px 7px;margin-left:5px}
+.search{width:100%;height:44px;text-align:left;padding:0 13px;font-weight:400;margin-bottom:10px;background:#fff}
+.commandeBox{display:none;margin-top:12px;padding:14px;background:#fff;border:1px solid #ead9d2;border-radius:14px;white-space:pre-wrap;line-height:1.55;font-family:monospace;font-size:14px}
+.commandeBox.ok{background:#eff8f0;border-color:#bfdcc3}.commandeBox.bad{background:#fff1f1;border-color:#e6bebe}.commandeBox.warn{background:#fff8ee;border-color:#ead2ad}
+@media(max-width:520px){.rangee{grid-template-columns:minmax(0,1fr) 38px 62px 38px}.nom{font-size:13px}.tabs{gap:5px}.tab{font-size:13px}}
+</style>
+</head>
+<body><main>
+<h1>Gestion des stocks</h1>
+<p class="sous-titre">Baby Sweety's · Stock général</p>
+
+<div class="tabs">
+ <button class="tab active" data-tab="boules">🎄 Boules</button>
+ <button class="tab" data-tab="clips">📎 Clips</button>
+ <button class="tab" data-tab="motifs">🧸 Motifs</button>
+ <button class="tab" data-tab="anneaux">🦷 Anneaux</button>
+ <button class="tab" data-tab="doudous">🧸 Doudous</button>
+ <button class="tab" data-tab="commandes">🧾 Commandes</button>
+</div>
+
+<section id="boules" class="panel active">
+ <div id="boulesList"></div>
+ <button class="save" id="saveBoules">Enregistrer le stock des boules</button>
+ <div class="status" id="statusBoules"></div>
+</section>
+
+<section id="clips" class="panel">
+ <input id="searchClips" class="search" placeholder="🔎 Rechercher un clip…">
+ <div id="clipsList"></div>
+ <button class="save" id="saveClips">Enregistrer le stock des clips</button>
+ <div class="status" id="statusClips"></div>
+ <p class="note">Les clips sont repris directement de la version actuelle du configurateur attache-tétine.</p>
+</section>
+
+<section id="motifs" class="panel">
+ <input id="searchMotifs" class="search" placeholder="🔎 Rechercher un motif…">
+ <div id="motifsList"></div>
+ <button class="save" id="saveMotifs">Enregistrer le stock des motifs</button>
+ <div class="status" id="statusMotifs"></div>
+</section>
+
+<section id="anneaux" class="panel">
+ <div id="anneauxList"></div>
+ <button class="save" id="saveAnneaux">Enregistrer le stock des anneaux</button>
+ <div class="status" id="statusAnneaux"></div>
+</section>
+
+<section id="doudous" class="panel">
+ <div id="doudousList"></div>
+ <button class="save" id="saveDoudous">Enregistrer le stock des doudous</button>
+ <div class="status" id="statusDoudous"></div>
+</section>
+
+<section id="commandes" class="panel">
+ <div class="group open">
+  <button class="groupBtn" type="button">Commande payée <span>⌄</span></button>
+  <div class="groupBody" style="display:block">
+   <p class="note" style="text-align:left">Colle le code reçu dans la commande Webador. Vérifie d’abord : aucun stock n’est retiré avant ta confirmation.</p>
+   <input id="commandeRef" class="search" placeholder="Ex. BS-ATM-2609-019" style="text-transform:uppercase">
+   <button class="save" id="checkCommande" style="background:#ead9d2;color:#654e49">🔎 Vérifier sans déduire</button>
+   <div id="commandePreview" class="commandeBox"></div>
+   <button class="save" id="payCommande" disabled>✓ Commande payée — Déduire le stock</button>
+   <div id="commandeResult" class="commandeBox"></div>
+  </div>
+ </div>
+</section>
+</main>
+
+<script>
+const API_BOULES='https://baby-sweetys-creations.babyysweetys.workers.dev/stock/boules';
+const API_CLIPS='https://baby-sweetys-creations.babyysweetys.workers.dev/stock/clips';
+const API_MOTIFS='https://baby-sweetys-creations.babyysweetys.workers.dev/stock/motifs';
+const API_ANNEAUX='https://baby-sweetys-creations.babyysweetys.workers.dev/stock/anneaux';
+const API_DOUDOUS='https://baby-sweetys-creations.babyysweetys.workers.dev/stock/doudous';
+const DATA={"boules": ["Vert mat", "Vert", "Rouge mat", "Rouge", "Bordeaux mat", "Bordeaux", "Marron mat", "Marron", "Kaki mat", "Kaki", "Bleu mat", "Bleu", "Blush mat", "Blush", "Or mat", "Or", "Blanc"], "clips52": {"Clip rond 52 mm": ["Noir", "Gris foncé", "Gris", "Blanc", "Chocolat", "Marron", "Camel", "Beige", "Pêche", "Pêche quartz", "Rose doux", "Rose clair", "Rose pastel", "Rose layette", "Rose", "Rose saumon", "Lilas", "Vieux rose", "Blush", "Bordeaux", "Fuchsia", "Marbré violet", "Marbré fuchsia", "Marbré rose", "Nacré rose", "Nacré or", "Nacré blanc", "Bleu poudré", "Bleu bébé", "Bleu pastel", "Bleu ciel", "Bleu foncé", "Turquoise", "Menthe", "Bleu d’eau", "Olive", "Kaki", "Vert citron", "Moutarde", "Jaune", "Jaune pastel", "Orange", "Rouge", "Marbré", "Marbré bleu"], "Clip renard endormi 52 mm": ["Renard endormi – Rose", "Renard endormi – Bleu", "Renard endormi – Olive", "Renard endormi – Orange", "Renard endormi – Marron", "Renard endormi – Moutarde", "Renard endormi – Gris"]}, "clips35": {"Clip Rond 35 mm": ["Rond — Noir", "Rond — Gris foncé", "Rond — Gris clair", "Rond — Rose pastel", "Rond — Marbré rose", "Rond — Marbré bordeaux", "Rond — Marbré bleu", "Rond — Pêche", "Rond — Bleu roi", "Rond — Bleu", "Rond — Orange", "Rond — Marron", "Rond — Moutarde", "Rond — Bleu lavande", "Rond — Bleu poudré", "Rond — Vert pastel", "Rond — Vert", "Rond — Menthe", "Rond — Turquoise clair", "Rond — Turquoise", "Rond — Rouge", "Rond — Corail", "Rond — Orange vif", "Rond — Jaune pastel", "Rond — Bordeaux", "Rond — Fuchsia", "Rond — Violet", "Rond — Lilas", "Rond — Mauve", "Rond — Rose clair", "Rond — Saumon", "Rond — Rose", "Rond — Vieux rose"], "Clip Renard 35 mm": ["Renard — Marron", "Renard — Orange", "Renard — Moutarde", "Renard — Rose", "Renard — Blanc", "Renard — Bleu"], "Clip Arc-en-ciel 35 mm": ["Arc-en-ciel"], "Clip Ourson 35 mm": ["Ourson"], "Clip Lion 35 mm": ["Lion"], "Clip Feuille 35 mm": ["Feuille — Gris", "Feuille — Blanc", "Feuille — Jaune", "Feuille — Rose", "Feuille — Moutarde", "Feuille — Vert", "Feuille — Bleu"], "Clip Fleur 35 mm": ["Fleur — Blanc", "Fleur — Lilas", "Fleur — Blush", "Fleur — Olive", "Fleur — Rose", "Fleur — Fuchsia"], "Clip Cœur 35 mm": ["Cœur — Noir", "Cœur — Gris foncé", "Cœur — Gris clair", "Cœur — Jaune pastel", "Cœur — Menthe", "Cœur — Turquoise", "Cœur — Lilas", "Cœur — Fuchsia"]}, "motifs": {"🐾 Motifs animaux": ["Doudou Blanc", "Doudou Beige", "Doudou Gris", "Doudou Vieux rose", "Doudou Bleu", "Doudou Vert eau", "Renard Orange", "Renard Gris", "Renard Moutarde", "Renard Vieux rose", "Renard Bleu", "Renard Blanc", "Renard endormi Olive", "Renard endormi Orange", "Renard endormi Marron", "Renard endormi Gris", "Renard endormi Moutarde", "Renard endormi Bleu", "Renard endormi Rose", "Renard indien Vert eau", "Renard indien Moutarde", "Renard indien Bleu poudré", "Renard indien Vieux rose", "Renard indien Blush", "Renard indien Gris", "Renard indien Olive", "Renard indien Bleu", "Renard indien Rose", "Panda Rose", "Panda Gris", "Panda Bleu", "Tortue Rose", "Tortue Vert", "Tortue Bleu", "Tortue Menthe", "Tortue Vert eau", "Mouton Rose", "Mouton Menthe", "Mouton Gris", "Mouton Camel", "Mouton Bleu", "Lion Rose", "Lion Moutarde", "Lion Marron", "Éléphant Rose", "Éléphant Bleu", "Hérisson indien Rose", "Hérisson indien Moutarde", "Hérisson indien Gris", "Hérisson indien Beige", "Hérisson indien Bleu", "Chat Jaune pastel", "Chat Bleu", "Chat Marron", "Chat Vert eau", "Chat Gris", "Oiseau Vert eau", "Oiseau Rose", "Oiseau Fuchsia", "Oiseau Blush", "Oiseau Gris", "Oiseau Pêche", "Oiseau Bleu", "Pingouin Bleu pastel", "Pingouin Rose", "Pingouin Gris", "Pingouin Noir", "Pingouin Vert eau", "Grenouille Gris", "Grenouille Bleu", "Grenouille Rose", "Koala Lilas", "Koala Rose", "Koala Bleu", "Biquette Beige", "Biquette Blanc", "Biquette Gris", "Lama Pêche", "Lama Bleu", "Lama Beige", "Lama Marron", "Lama Rose", "Lama Rose pastel", "Lama Gris", "Lama Olive", "Lama Moutarde", "Lama Blanc", "Girafe Moutarde", "Girafe Jaune", "Tricératops Bleu", "Tricératops Gris", "Hérisson Lilas", "Hérisson Bleu", "Tigre Moutarde", "Hippopotame Rose", "Hippocampe Bleu", "Baleine Grise", "Ourson Vert"], "✨ Motifs animaux 3D": ["Papillon 3D Gris", "Papillon 3D Rose", "Papillon 3D Blanc", "Hérisson 3D Marron", "Hérisson 3D Blush", "Hérisson 3D Marron foncé", "Hérisson 3D Gris", "Renard 3D Orange", "Renard 3D Camel", "Renard 3D Blush", "Chat 3D Beige", "Chat 3D Marron", "Chat 3D Gris", "Chat 3D Blanc", "Chat 3D Moutarde", "Mouton 3D Gris", "Vache 3D Blanche"], "💗 Motifs": ["Cœur réversible Rouge", "Cœur réversible Jaune pastel", "Cœur réversible Vert", "Cœur réversible Rose", "Cœur réversible Vieux rose", "Cœur réversible Bleu foncé", "Cœur réversible Vert eau", "Cœur réversible Moutarde", "I ♥ DAD Pêche quartz", "I ♥ DAD Rouge", "I ♥ DAD Rose", "I ♥ DAD Fuchsia", "I ♥ DAD Bordeaux", "I ♥ DAD Bleu", "I ♥ DAD Bleu pastel", "I ♥ DAD Bleu foncé", "I ♥ DAD Gris", "I ♥ DAD Rose pastel", "I ♥ MOM Rose pastel", "I ♥ MOM Fuchsia", "I ♥ MOM Bleu foncé", "Étoile Vert eau", "Étoile Bleu pastel", "Étoile Rose", "Étoile Moutarde", "Étoile Rose foncé", "Étoile Rose pastel", "Lune Rose pastel", "Lune Moutarde", "Lune Jaune pastel", "Lune Bleu pastel", "Lune Rose", "Lune Rose foncé", "Coquillage Bleu pastel", "Coquillage Olive", "Coquillage Moutarde", "Lotus Kaki", "Lotus Lilas", "Lotus Rouge", "Lotus Blanc", "Lotus Pêche", "Lotus Fuchsia", "Lotus Rose", "Lotus Rose pastel", "Lotus Violet", "Lotus Pêche quartz", "Lotus Marron", "Lotus Vieux rose", "Lotus Bleu", "Lotus Olive", "Lotus Blush", "Rose Granite", "Rose Beige", "Rose Rouge", "Rose Pêche quartz", "Rose Blanc", "Rose Moutarde", "Rose Rose pastel", "Rose Rose", "Rose Olive", "Rose Rose saumon", "Rose Marbré", "Rose Marron", "Hibiscus Rose pastel", "Hibiscus Violet", "Hibiscus Blush", "Hibiscus Moutarde", "Hibiscus Olive", "Hibiscus Marron", "Hibiscus Beige", "Ballon de foot Vert eau", "Ballon de foot Rouge", "Ballon de foot Bleu pastel", "Ballon de foot Gris", "Feuille Moutarde", "Feuille Vert", "Feuille Rose pastel", "Feuille Blanc", "Feuille Beige", "Feuille Rouge", "Feuille Olive", "Feuille Bleu pastel", "Pâquerette Lilas", "Pâquerette Olive", "Pâquerette Beige", "Pâquerette Jaune", "Pâquerette Pêche quartz", "Pâquerette Gris", "Pâquerette Blanc", "Pâquerette Jaune pastel", "Pâquerette Marron", "Pâquerette Blush", "Pâquerette Rose", "Tipi Moutarde", "Tipi Bordeaux", "Tipi Gris", "Tipi Blanc", "Tipi Bleu", "Tipi Blush", "Tipi Olive", "Tipi Rose pastel", "Tipi Marron", "Voiture Orange", "Voiture Bleu pastel", "Voiture Bleu foncé", "Voiture Rouge", "Voiture Rose", "Moto Bleu ciel", "Moto Gris foncé", "Moto Vert eau", "Moto Bleu foncé", "Moto Rouge", "Moto Bleu pastel", "Moto Jaune"]}, "anneaux": {"Renard endormi": ["Renard endormi – Orange", "Renard endormi – Marron", "Renard endormi – Bleu", "Renard endormi – Gris", "Renard endormi – Rose", "Renard endormi – Rose pâle", "Renard endormi – Moutarde"], "Doudou": ["Vert eau", "Taupe", "Beige rose", "Blanc gris", "Gris", "Bleu"], "Renard indien": ["Bleu gris", "Moutarde", "Bleu", "Gris"], "Ballon de foot": ["Bleu clair", "Vert eau", "Gris", "Blanc", "Jaune", "Bleu"], "Fleur d’hibiscus": ["Vieux rose", "Rose pâle", "Fuchsia", "Beige"], "Serpent": ["Rose", "Vert"], "Chèvre": ["Gris", "Blanc marron"], "Lama": ["Marron", "Bleu"], "Animaux": ["Lion", "Zèbre", "Mouton", "Licorne", "Arc-en-ciel", "Panda", "Ourson"], "Lune ourson": ["Moutarde", "Bleu", "Jaune"], "Renard": ["Moutarde", "Orange", "Bleu gris", "Rose", "Blanc", "Gris", "Vieux rose"]}};
+const DOUDOUS=["Moutarde", "Bleu", "Gris clair", "Arcs", "Pissenlits", "Grands arcs", "Petits arcs", "Oursons", "Agrumes", "Fleurie marron", "Fleurie colorée", "Fleurie bleue", "Fleurie rose", "Fleurie jaune"];
+
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));
+ b.classList.add('active'); document.getElementById(b.dataset.tab).classList.add('active');
+});
+
+function row(key,label){
+ const r=document.createElement('div');r.className='rangee';r.dataset.search=label.toLowerCase();
+ const n=document.createElement('span');n.className='nom';n.textContent=label;
+ const m=document.createElement('button');m.className='qtybtn';m.type='button';m.textContent='−';
+ const i=document.createElement('input');i.type='number';i.min='0';i.step='1';i.value='0';i.dataset.key=key;i.inputMode='numeric';
+ const p=document.createElement('button');p.className='qtybtn';p.type='button';p.textContent='+';
+ m.onclick=()=>i.value=Math.max(0,(parseInt(i.value)||0)-1);
+ p.onclick=()=>i.value=(parseInt(i.value)||0)+1;
+ r.append(n,m,i,p);return r;
+}
+function group(title,items,prefix){
+ const g=document.createElement('div');g.className='group';
+ const b=document.createElement('button');b.type='button';b.className='groupBtn';b.innerHTML='<span>'+title+'</span><span>⌄</span>';
+ const body=document.createElement('div');body.className='groupBody';
+ items.forEach((name,idx)=>body.appendChild(row(prefix+'|'+name,name)));
+ b.onclick=()=>g.classList.toggle('open');g.append(b,body);return g;
+}
+function render(){
+ const bl=document.getElementById('boulesList');
+ const gb=group('Boules de Noël',DATA.boules,'boule');gb.classList.add('open');bl.appendChild(gb);
+ const cl=document.getElementById('clipsList');
+ Object.entries(DATA.clips52).forEach(([g,items])=>cl.appendChild(group(g,items,'52')));
+ Object.entries(DATA.clips35).forEach(([g,items])=>cl.appendChild(group(g,items,'35')));
+ const ml=document.getElementById('motifsList');
+ Object.entries(DATA.motifs).forEach(([theme,items],idx)=>{
+   const mg=group(theme,items,'motif');
+   if(idx===0)mg.classList.add('open');
+   ml.appendChild(mg);
+ });
+ const dl=document.getElementById('doudousList');
+ const dg=group('Doudous personnalisés',DOUDOUS,'doudou');dg.classList.add('open');dl.appendChild(dg);
+ const al=document.getElementById('anneauxList');
+ Object.entries(DATA.anneaux).forEach(([fam,items],idx)=>{
+   const labels=items.map(x=>String(x).trim());
+   const ag=group(fam,labels,'anneau');
+   if(idx===0)ag.classList.add('open');
+   al.appendChild(ag);
+ });
+}
+function mapInputs(panel){
+ const out={};
+ document.querySelectorAll('#'+panel+' input[data-key]').forEach(i=>out[i.dataset.key]=Math.max(0,parseInt(i.value)||0));
+ return out;
+}
+function setMap(panel,map){
+ document.querySelectorAll('#'+panel+' input[data-key]').forEach(i=>{if(map[i.dataset.key]!==undefined)i.value=map[i.dataset.key]});
+}
+async function loadBoules(){
+ const st=document.getElementById('statusBoules');st.textContent='Chargement du stock…';
+ try{
+  const r=await fetch(API_BOULES,{cache:'no-store'}),d=await r.json();
+  if(!r.ok||!d.success)throw new Error(d.error||'Erreur de chargement');
+  const map={};(Array.isArray(d.stock)?d.stock:[]).forEach(a=>map['boule|'+a.couleur]=Math.max(0,Number(a.quantite)||0));
+  setMap('boules',map);st.textContent='Stock chargé ✓';
+ }catch(e){st.textContent='Erreur de chargement : '+e.message}
+}
+async function saveBoules(){
+ const btn=document.getElementById('saveBoules'),st=document.getElementById('statusBoules');btn.disabled=true;st.textContent='Enregistrement…';
+ const m=mapInputs('boules');const stock=DATA.boules.map(c=>({couleur:c,quantite:m['boule|'+c]||0}));
+ try{
+  const r=await fetch(API_BOULES,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({stock})}),d=await r.json();
+  if(!r.ok||!d.success)throw new Error(d.error||'Erreur d’enregistrement');st.textContent='Stock des boules enregistré ✓';
+ }catch(e){st.textContent='Erreur : '+e.message}finally{btn.disabled=false}
+}
+async function loadClips(){
+ const st=document.getElementById('statusClips');st.textContent='Chargement du stock des clips…';
+ try{
+  const r=await fetch(API_CLIPS,{cache:'no-store'}),d=await r.json();
+  if(!r.ok||!d.success)throw new Error(d.error||'Route /stock/clips non disponible');
+  const map={};(Array.isArray(d.stock)?d.stock:[]).forEach(a=>{
+   const key=(a.taille||a.type||'')+'|'+(a.nom||a.couleur||''); map[key]=Math.max(0,Number(a.quantite)||0);
+  });
+  setMap('clips',map);st.textContent='Stock des clips chargé ✓';
+ }catch(e){
+  const local=JSON.parse(localStorage.getItem('bs-stock-clips')||'{}');setMap('clips',local);
+  st.textContent='Clips prêts — sauvegarde locale active en attendant la connexion au Worker.';
+ }
+}
+async function saveClips(){
+ const btn=document.getElementById('saveClips'),st=document.getElementById('statusClips');btn.disabled=true;st.textContent='Enregistrement…';
+ const m=mapInputs('clips');localStorage.setItem('bs-stock-clips',JSON.stringify(m));
+ const stock=Object.entries(m).map(([key,quantite])=>{const [taille,...rest]=key.split('|');return {taille,nom:rest.join('|'),quantite}});
+ try{
+  const r=await fetch(API_CLIPS,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({stock})}),d=await r.json();
+  if(!r.ok||!d.success)throw new Error(d.error||'Route /stock/clips non disponible');
+  st.textContent='Stock des clips enregistré dans la base ✓';
+ }catch(e){st.textContent='Stock des clips sauvegardé sur cet appareil ✓ — connexion au Worker à faire ensuite.'}
+ finally{btn.disabled=false}
+}
+
+async function loadSimple(panel,api,storage,statusId){
+ const st=document.getElementById(statusId);st.textContent='Chargement…';
+ try{
+  const r=await fetch(api,{cache:'no-store'}),d=await r.json();
+  if(!r.ok||!d.success)throw new Error('Route non disponible');
+  const map={};(Array.isArray(d.stock)?d.stock:[]).forEach(a=>{
+    const q=Math.max(0,Number(a.quantite)||0);
+    map[a.key||a.nom]=q;
+    if(panel==='anneaux'){
+      const nom=String(a.nom||'').trim();
+      const parts=nom.split(/\s+[—-]\s+/);
+      if(parts.length>=3 && parts[0].trim()===parts[1].trim()){
+        const clean=parts.slice(1).join(' – ').trim();
+        map['anneau|'+clean]=q;
+      }
+    }
+  });
+  setMap(panel,map);st.textContent='Stock chargé ✓';
+ }catch(e){
+  setMap(panel,JSON.parse(localStorage.getItem(storage)||'{}'));
+  st.textContent='Prêt — sauvegarde locale active en attendant la connexion au Worker.';
+ }
+}
+async function saveSimple(panel,api,storage,statusId,buttonId){
+ const btn=document.getElementById(buttonId),st=document.getElementById(statusId),m=mapInputs(panel);
+ btn.disabled=true; localStorage.setItem(storage,JSON.stringify(m)); st.textContent='Enregistrement…';
+ const stock=Object.entries(m).map(([key,quantite])=>({key,nom:key.split('|').slice(1).join('|'),quantite}));
+ try{
+  const r=await fetch(api,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({stock})}),d=await r.json();
+  if(!r.ok||!d.success)throw new Error('Route non disponible');
+  st.textContent='Stock enregistré dans la base ✓';
+ }catch(e){st.textContent='Stock sauvegardé sur cet appareil ✓ — connexion au Worker à faire ensuite.'}
+ finally{btn.disabled=false}
+}
+
+document.getElementById('saveBoules').onclick=saveBoules;
+document.getElementById('saveClips').onclick=saveClips;
+document.getElementById('saveMotifs').onclick=()=>saveSimple('motifs',API_MOTIFS,'bs-stock-motifs','statusMotifs','saveMotifs');
+document.getElementById('saveAnneaux').onclick=()=>saveSimple('anneaux',API_ANNEAUX,'bs-stock-anneaux','statusAnneaux','saveAnneaux');
+document.getElementById('saveDoudous').onclick=()=>saveSimple('doudous',API_DOUDOUS,'bs-stock-doudous','statusDoudous','saveDoudous');
+document.getElementById('searchClips').oninput=function(){
+ const q=this.value.trim().toLowerCase();
+ document.querySelectorAll('#clipsList .rangee').forEach(r=>r.style.display=!q||r.dataset.search.includes(q)?'grid':'none');
+ document.querySelectorAll('#clipsList .group').forEach(g=>{
+   const visible=[...g.querySelectorAll('.rangee')].some(r=>r.style.display!=='none');
+   g.style.display=visible?'block':'none'; if(q&&visible)g.classList.add('open');
+ });
+};
+document.getElementById('searchMotifs').oninput=function(){
+ const q=this.value.trim().toLowerCase();
+ document.querySelectorAll('#motifsList .rangee').forEach(r=>r.style.display=!q||r.dataset.search.includes(q)?'grid':'none');
+};
+render();loadBoules();loadClips();
+loadSimple('motifs',API_MOTIFS,'bs-stock-motifs','statusMotifs');
+loadSimple('anneaux',API_ANNEAUX,'bs-stock-anneaux','statusAnneaux');
+loadSimple('doudous',API_DOUDOUS,'bs-stock-doudous','statusDoudous');
+
+const API_BASE='https://baby-sweetys-creations.babyysweetys.workers.dev';
+const commandeRef=document.getElementById('commandeRef');
+const commandePreview=document.getElementById('commandePreview');
+const commandeResult=document.getElementById('commandeResult');
+const payCommande=document.getElementById('payCommande');
+
+async function verifierCommande(){
+ const ref=(commandeRef.value||'').trim().toUpperCase();
+ commandeResult.style.display='none';
+ payCommande.disabled=true;
+ commandePreview.style.display='block';
+ commandePreview.className='commandeBox';
+ commandePreview.textContent='Vérification…';
+ if(!ref){commandePreview.textContent='Entre un code de création.';commandePreview.classList.add('bad');return}
+ try{
+  const r=await fetch(API_BASE+'/commande/test/'+encodeURIComponent(ref),{cache:'no-store'});
+  const d=await r.json();
+  if(!r.ok||!d.success)throw new Error(d.error||'Commande introuvable');
+  let txt=`${d.reference}\n${d.type}`;
+  if(d.doudou){
+    txt+=`\n\nDoudou : ${d.doudou.creation || d.doudou.nom || 'modèle inconnu'}\nStock : ${d.doudou.stock?.quantite ?? 'introuvable'}`;
+  }else if(d.anneau){
+    txt+=`\n\nAnneau : ${d.anneau.creation}\nStock : ${d.anneau.stock?.quantite ?? 'introuvable'}`;
+  }else if(Array.isArray(d.boules)){
+    d.boules.forEach((b,i)=>{
+      txt+=`\n\nBoule ${i+1} : ${b.couleur || 'couleur inconnue'}`;
+      if(b.prenom) txt+=`\nPrénom : ${b.prenom}`;
+      if(b.modele) txt+=`\nModèle : ${b.modele}`;
+    });
+    for(const x of (d.stock_boules||[])){
+      txt+=`\n\nStock ${x.couleur} : ${x.stock?.quantite ?? 'introuvable'} (besoin : ${x.besoin})`;
+    }
+  }else if(d.clip){
+    txt+=`\n\nClip ${d.clip.taille} mm : ${d.clip.creation}\nStock : ${d.clip.stock?.quantite ?? 'introuvable'}`;
+    for(const m of (d.motifs||[])) txt+=`\n\nMotif : ${m.creation}\nStock : ${m.stock?.quantite ?? 'introuvable'}`;
+  }
+  if(d.deja_traitee) txt+='\n\n⚠️ Déjà traitée';
+  commandePreview.textContent=txt;
+  commandePreview.classList.add(d.deja_traitee?'warn':'ok');
+  payCommande.disabled=!!d.deja_traitee;
+ }catch(e){
+  commandePreview.textContent='Erreur : '+e.message;
+  commandePreview.classList.add('bad');
+ }
+}
+
+async function payerCommande(){
+ const ref=(commandeRef.value||'').trim().toUpperCase();
+ if(!confirm('Confirmer que cette commande est payée et déduire son stock ?'))return;
+ payCommande.disabled=true;
+ commandeResult.style.display='block';
+ commandeResult.className='commandeBox';
+ commandeResult.textContent='Déduction en cours…';
+ try{
+  const r=await fetch(API_BASE+'/commande/payer',{
+   method:'POST',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({reference:ref})
+  });
+  const d=await r.json();
+  if(!r.ok||!d.success)throw new Error(d.error||'Déduction refusée');
+  commandeResult.textContent='✓ '+d.message;
+  commandeResult.classList.add('ok');
+  await verifierCommande();
+  if(typeof loadClips==='function') await loadClips();
+  if(typeof loadBoules==='function') await loadBoules();
+  if(typeof loadMotifs==='function') await loadMotifs();
+  if(typeof loadAnneaux==='function') await loadAnneaux();
+ }catch(e){
+  commandeResult.textContent='Déduction refusée : '+e.message+'\nAucun stock ne doit être retiré.';
+  commandeResult.classList.add('bad');
+  await verifierCommande();
+ }
+}
+document.getElementById('checkCommande').addEventListener('click',verifierCommande);
+payCommande.addEventListener('click',payerCommande);
+
+</script>
+</body></html>
