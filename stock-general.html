@@ -42,6 +42,7 @@ input{width:100%;height:40px;border:1px solid #ddccc5;border-radius:10px;text-al
  <button class="tab" data-tab="motifs">🧸 Motifs</button>
  <button class="tab" data-tab="anneaux">🦷 Anneaux</button>
  <button class="tab" data-tab="doudous">🧸 Doudous</button>
+ <button class="tab" data-tab="doudouPlaid">🧸 Doudou + Plaid</button>
  <button class="tab" data-tab="commandes">🧾 Commandes</button>
 </div>
 
@@ -78,6 +79,12 @@ input{width:100%;height:40px;border:1px solid #ddccc5;border-radius:10px;text-al
  <div class="status" id="statusDoudous"></div>
 </section>
 
+<section id="doudouPlaid" class="panel">
+ <div id="doudouPlaidList"></div>
+ <button class="save" id="saveDoudouPlaid">Enregistrer le stock Doudou + Plaid</button>
+ <div class="status" id="statusDoudouPlaid"></div>
+</section>
+
 <section id="commandes" class="panel">
  <div class="group open">
   <button class="groupBtn" type="button">Commande payée <span>⌄</span></button>
@@ -99,7 +106,9 @@ const API_CLIPS='https://baby-sweetys-creations.babyysweetys.workers.dev/stock/c
 const API_MOTIFS='https://baby-sweetys-creations.babyysweetys.workers.dev/stock/motifs';
 const API_ANNEAUX='https://baby-sweetys-creations.babyysweetys.workers.dev/stock/anneaux';
 const API_DOUDOUS='https://baby-sweetys-creations.babyysweetys.workers.dev/stock/doudous';
+const API_DOUDOU_PLAID='https://baby-sweetys-creations.babyysweetys.workers.dev/stock/doudou-plaid';
 const DATA={"boules": ["Vert mat", "Vert", "Rouge mat", "Rouge", "Bordeaux mat", "Bordeaux", "Marron mat", "Marron", "Kaki mat", "Kaki", "Bleu mat", "Bleu", "Blush mat", "Blush", "Or mat", "Or", "Blanc"], "clips52": {"Clip rond 52 mm": ["Noir", "Gris foncé", "Gris", "Blanc", "Chocolat", "Marron", "Camel", "Beige", "Pêche", "Pêche quartz", "Rose doux", "Rose clair", "Rose pastel", "Rose layette", "Rose", "Rose saumon", "Lilas", "Vieux rose", "Blush", "Bordeaux", "Fuchsia", "Marbré violet", "Marbré fuchsia", "Marbré rose", "Nacré rose", "Nacré or", "Nacré blanc", "Bleu poudré", "Bleu bébé", "Bleu pastel", "Bleu ciel", "Bleu foncé", "Turquoise", "Menthe", "Bleu d’eau", "Olive", "Kaki", "Vert citron", "Moutarde", "Jaune", "Jaune pastel", "Orange", "Rouge", "Marbré", "Marbré bleu"], "Clip renard endormi 52 mm": ["Renard endormi – Rose", "Renard endormi – Bleu", "Renard endormi – Olive", "Renard endormi – Orange", "Renard endormi – Marron", "Renard endormi – Moutarde", "Renard endormi – Gris"]}, "clips35": {"Clip Rond 35 mm": ["Rond — Noir", "Rond — Gris foncé", "Rond — Gris clair", "Rond — Rose pastel", "Rond — Marbré rose", "Rond — Marbré bordeaux", "Rond — Marbré bleu", "Rond — Pêche", "Rond — Bleu roi", "Rond — Bleu", "Rond — Orange", "Rond — Marron", "Rond — Moutarde", "Rond — Bleu lavande", "Rond — Bleu poudré", "Rond — Vert pastel", "Rond — Vert", "Rond — Menthe", "Rond — Turquoise clair", "Rond — Turquoise", "Rond — Rouge", "Rond — Corail", "Rond — Orange vif", "Rond — Jaune pastel", "Rond — Bordeaux", "Rond — Fuchsia", "Rond — Violet", "Rond — Lilas", "Rond — Mauve", "Rond — Rose clair", "Rond — Saumon", "Rond — Rose", "Rond — Vieux rose"], "Clip Renard 35 mm": ["Renard — Marron", "Renard — Orange", "Renard — Moutarde", "Renard — Rose", "Renard — Blanc", "Renard — Bleu"], "Clip Arc-en-ciel 35 mm": ["Arc-en-ciel"], "Clip Ourson 35 mm": ["Ourson"], "Clip Lion 35 mm": ["Lion"], "Clip Feuille 35 mm": ["Feuille — Gris", "Feuille — Blanc", "Feuille — Jaune", "Feuille — Rose", "Feuille — Moutarde", "Feuille — Vert", "Feuille — Bleu"], "Clip Fleur 35 mm": ["Fleur — Blanc", "Fleur — Lilas", "Fleur — Blush", "Fleur — Olive", "Fleur — Rose", "Fleur — Fuchsia"], "Clip Cœur 35 mm": ["Cœur — Noir", "Cœur — Gris foncé", "Cœur — Gris clair", "Cœur — Jaune pastel", "Cœur — Menthe", "Cœur — Turquoise", "Cœur — Lilas", "Cœur — Fuchsia"]}, "motifs": {"🐾 Motifs animaux": ["Doudou Blanc", "Doudou Beige", "Doudou Gris", "Doudou Vieux rose", "Doudou Bleu", "Doudou Vert eau", "Renard Orange", "Renard Gris", "Renard Moutarde", "Renard Vieux rose", "Renard Bleu", "Renard Blanc", "Renard endormi Olive", "Renard endormi Orange", "Renard endormi Marron", "Renard endormi Gris", "Renard endormi Moutarde", "Renard endormi Bleu", "Renard endormi Rose", "Renard indien Vert eau", "Renard indien Moutarde", "Renard indien Bleu poudré", "Renard indien Vieux rose", "Renard indien Blush", "Renard indien Gris", "Renard indien Olive", "Renard indien Bleu", "Renard indien Rose", "Panda Rose", "Panda Gris", "Panda Bleu", "Tortue Rose", "Tortue Vert", "Tortue Bleu", "Tortue Menthe", "Tortue Vert eau", "Mouton Rose", "Mouton Menthe", "Mouton Gris", "Mouton Camel", "Mouton Bleu", "Lion Rose", "Lion Moutarde", "Lion Marron", "Éléphant Rose", "Éléphant Bleu", "Hérisson indien Rose", "Hérisson indien Moutarde", "Hérisson indien Gris", "Hérisson indien Beige", "Hérisson indien Bleu", "Chat Jaune pastel", "Chat Bleu", "Chat Marron", "Chat Vert eau", "Chat Gris", "Oiseau Vert eau", "Oiseau Rose", "Oiseau Fuchsia", "Oiseau Blush", "Oiseau Gris", "Oiseau Pêche", "Oiseau Bleu", "Pingouin Bleu pastel", "Pingouin Rose", "Pingouin Gris", "Pingouin Noir", "Pingouin Vert eau", "Grenouille Gris", "Grenouille Bleu", "Grenouille Rose", "Koala Lilas", "Koala Rose", "Koala Bleu", "Biquette Beige", "Biquette Blanc", "Biquette Gris", "Lama Pêche", "Lama Bleu", "Lama Beige", "Lama Marron", "Lama Rose", "Lama Rose pastel", "Lama Gris", "Lama Olive", "Lama Moutarde", "Lama Blanc", "Girafe Moutarde", "Girafe Jaune", "Tricératops Bleu", "Tricératops Gris", "Hérisson Lilas", "Hérisson Bleu", "Tigre Moutarde", "Hippopotame Rose", "Hippocampe Bleu", "Baleine Grise", "Ourson Vert"], "✨ Motifs animaux 3D": ["Papillon 3D Gris", "Papillon 3D Rose", "Papillon 3D Blanc", "Hérisson 3D Marron", "Hérisson 3D Blush", "Hérisson 3D Marron foncé", "Hérisson 3D Gris", "Renard 3D Orange", "Renard 3D Camel", "Renard 3D Blush", "Chat 3D Beige", "Chat 3D Marron", "Chat 3D Gris", "Chat 3D Blanc", "Chat 3D Moutarde", "Mouton 3D Gris", "Vache 3D Blanche"], "💗 Motifs": ["Cœur réversible Rouge", "Cœur réversible Jaune pastel", "Cœur réversible Vert", "Cœur réversible Rose", "Cœur réversible Vieux rose", "Cœur réversible Bleu foncé", "Cœur réversible Vert eau", "Cœur réversible Moutarde", "I ♥ DAD Pêche quartz", "I ♥ DAD Rouge", "I ♥ DAD Rose", "I ♥ DAD Fuchsia", "I ♥ DAD Bordeaux", "I ♥ DAD Bleu", "I ♥ DAD Bleu pastel", "I ♥ DAD Bleu foncé", "I ♥ DAD Gris", "I ♥ DAD Rose pastel", "I ♥ MOM Rose pastel", "I ♥ MOM Fuchsia", "I ♥ MOM Bleu foncé", "Étoile Vert eau", "Étoile Bleu pastel", "Étoile Rose", "Étoile Moutarde", "Étoile Rose foncé", "Étoile Rose pastel", "Lune Rose pastel", "Lune Moutarde", "Lune Jaune pastel", "Lune Bleu pastel", "Lune Rose", "Lune Rose foncé", "Coquillage Bleu pastel", "Coquillage Olive", "Coquillage Moutarde", "Lotus Kaki", "Lotus Lilas", "Lotus Rouge", "Lotus Blanc", "Lotus Pêche", "Lotus Fuchsia", "Lotus Rose", "Lotus Rose pastel", "Lotus Violet", "Lotus Pêche quartz", "Lotus Marron", "Lotus Vieux rose", "Lotus Bleu", "Lotus Olive", "Lotus Blush", "Rose Granite", "Rose Beige", "Rose Rouge", "Rose Pêche quartz", "Rose Blanc", "Rose Moutarde", "Rose Rose pastel", "Rose Rose", "Rose Olive", "Rose Rose saumon", "Rose Marbré", "Rose Marron", "Hibiscus Rose pastel", "Hibiscus Violet", "Hibiscus Blush", "Hibiscus Moutarde", "Hibiscus Olive", "Hibiscus Marron", "Hibiscus Beige", "Ballon de foot Vert eau", "Ballon de foot Rouge", "Ballon de foot Bleu pastel", "Ballon de foot Gris", "Feuille Moutarde", "Feuille Vert", "Feuille Rose pastel", "Feuille Blanc", "Feuille Beige", "Feuille Rouge", "Feuille Olive", "Feuille Bleu pastel", "Pâquerette Lilas", "Pâquerette Olive", "Pâquerette Beige", "Pâquerette Jaune", "Pâquerette Pêche quartz", "Pâquerette Gris", "Pâquerette Blanc", "Pâquerette Jaune pastel", "Pâquerette Marron", "Pâquerette Blush", "Pâquerette Rose", "Tipi Moutarde", "Tipi Bordeaux", "Tipi Gris", "Tipi Blanc", "Tipi Bleu", "Tipi Blush", "Tipi Olive", "Tipi Rose pastel", "Tipi Marron", "Voiture Orange", "Voiture Bleu pastel", "Voiture Bleu foncé", "Voiture Rouge", "Voiture Rose", "Moto Bleu ciel", "Moto Gris foncé", "Moto Vert eau", "Moto Bleu foncé", "Moto Rouge", "Moto Bleu pastel", "Moto Jaune"]}, "anneaux": {"Renard endormi": ["Renard endormi – Orange", "Renard endormi – Marron", "Renard endormi – Bleu", "Renard endormi – Gris", "Renard endormi – Rose", "Renard endormi – Rose pâle", "Renard endormi – Moutarde"], "Doudou": ["Vert eau", "Taupe", "Beige rose", "Blanc gris", "Gris", "Bleu"], "Renard indien": ["Bleu gris", "Moutarde", "Bleu", "Gris"], "Ballon de foot": ["Bleu clair", "Vert eau", "Gris", "Blanc", "Jaune", "Bleu"], "Fleur d’hibiscus": ["Vieux rose", "Rose pâle", "Fuchsia", "Beige"], "Serpent": ["Rose", "Vert"], "Chèvre": ["Gris", "Blanc marron"], "Lama": ["Marron", "Bleu"], "Animaux": ["Lion", "Zèbre", "Mouton", "Licorne", "Arc-en-ciel", "Panda", "Ourson"], "Lune ourson": ["Moutarde", "Bleu", "Jaune"], "Renard": ["Moutarde", "Orange", "Bleu gris", "Rose", "Blanc", "Gris", "Vieux rose"]}};
+const DOUDOU_PLAID=["Blanc","Rose","Gris"];
 const DOUDOUS=["Moutarde", "Bleu", "Gris clair", "Arcs", "Pissenlits", "Grands arcs", "Petits arcs", "Oursons", "Agrumes", "Fleurie marron", "Fleurie colorée", "Fleurie bleue", "Fleurie rose", "Fleurie jaune"];
 
 
@@ -137,6 +146,8 @@ function render(){
    if(idx===0)mg.classList.add('open');
    ml.appendChild(mg);
  });
+ const dpl=document.getElementById('doudouPlaidList');
+ const dpg=group('Doudou + Plaid',DOUDOU_PLAID,'doudou-plaid');dpg.classList.add('open');dpl.appendChild(dpg);
  const dl=document.getElementById('doudousList');
  const dg=group('Doudous personnalisés',DOUDOUS,'doudou');dg.classList.add('open');dl.appendChild(dg);
  const al=document.getElementById('anneauxList');
@@ -238,6 +249,7 @@ document.getElementById('saveClips').onclick=saveClips;
 document.getElementById('saveMotifs').onclick=()=>saveSimple('motifs',API_MOTIFS,'bs-stock-motifs','statusMotifs','saveMotifs');
 document.getElementById('saveAnneaux').onclick=()=>saveSimple('anneaux',API_ANNEAUX,'bs-stock-anneaux','statusAnneaux','saveAnneaux');
 document.getElementById('saveDoudous').onclick=()=>saveSimple('doudous',API_DOUDOUS,'bs-stock-doudous','statusDoudous','saveDoudous');
+document.getElementById('saveDoudouPlaid').onclick=()=>saveSimple('doudouPlaid',API_DOUDOU_PLAID,'bs-stock-doudou-plaid','statusDoudouPlaid','saveDoudouPlaid');
 document.getElementById('searchClips').oninput=function(){
  const q=this.value.trim().toLowerCase();
  document.querySelectorAll('#clipsList .rangee').forEach(r=>r.style.display=!q||r.dataset.search.includes(q)?'grid':'none');
@@ -254,6 +266,7 @@ render();loadBoules();loadClips();
 loadSimple('motifs',API_MOTIFS,'bs-stock-motifs','statusMotifs');
 loadSimple('anneaux',API_ANNEAUX,'bs-stock-anneaux','statusAnneaux');
 loadSimple('doudous',API_DOUDOUS,'bs-stock-doudous','statusDoudous');
+loadSimple('doudouPlaid',API_DOUDOU_PLAID,'bs-stock-doudou-plaid','statusDoudouPlaid');
 
 const API_BASE='https://baby-sweetys-creations.babyysweetys.workers.dev';
 const commandeRef=document.getElementById('commandeRef');
@@ -274,7 +287,9 @@ async function verifierCommande(){
   const d=await r.json();
   if(!r.ok||!d.success)throw new Error(d.error||'Commande introuvable');
   let txt=`${d.reference}\n${d.type}`;
-  if(d.doudou){
+  if(d.ensemble){
+    txt+=`\n\nDoudou + Plaid : ${d.ensemble.creation || 'coloris inconnu'}\nStock : ${d.ensemble.stock?.quantite ?? 'introuvable'}`;
+  }else if(d.doudou){
     txt+=`\n\nDoudou : ${d.doudou.creation || d.doudou.nom || 'modèle inconnu'}\nStock : ${d.doudou.stock?.quantite ?? 'introuvable'}`;
   }else if(d.anneau){
     txt+=`\n\nAnneau : ${d.anneau.creation}\nStock : ${d.anneau.stock?.quantite ?? 'introuvable'}`;
@@ -323,6 +338,8 @@ async function payerCommande(){
   if(typeof loadBoules==='function') await loadBoules();
   if(typeof loadMotifs==='function') await loadMotifs();
   if(typeof loadAnneaux==='function') await loadAnneaux();
+  await loadSimple('doudous',API_DOUDOUS,'bs-stock-doudous','statusDoudous');
+  await loadSimple('doudouPlaid',API_DOUDOU_PLAID,'bs-stock-doudou-plaid','statusDoudouPlaid');
  }catch(e){
   commandeResult.textContent='Déduction refusée : '+e.message+'\nAucun stock ne doit être retiré.';
   commandeResult.classList.add('bad');
