@@ -20,7 +20,10 @@ input[type=text]{width:100%;height:44px;border:1px solid var(--l);border-radius:
   .controls{order:2!important}
 }
 </style>
-</head><body>
+<style>
+.model.stock-out{opacity:.38!important;filter:grayscale(.55);cursor:not-allowed!important;position:relative}
+.model.stock-out::after{content:"Rupture";position:absolute;left:2px;right:2px;bottom:2px;background:#fff;color:#9b5361;font-size:9px;font-weight:800;padding:3px 1px;border-radius:5px;text-align:center}
+</style></head><body>
 <header><div class="brand">Baby Sweety's ♥</div><h1>Personnalisez votre protège-carnet de santé ♡</h1><div>Un accessoire unique pour accompagner toutes ses aventures ♡</div></header>
 <main><section class="controls">
 <div class="step"><div class="ttl"><span class="n">1</span>Choisissez votre modèle</div><div class="models" id="models"></div></div>
@@ -52,25 +55,82 @@ function draw(){
  q("name").style.transform="translate(calc(-50% + "+S.x+"px),calc(-50% + "+S.y+"px)) rotate("+S.rot+"deg)";
  q("personal").classList.toggle("hidden",!S.personal);
 }
-function renderModels(){q("models").innerHTML="";modelsData.forEach(m=>{let b=document.createElement("button");b.type="button";b.className="model"+(S.model===m[0]?" active":"");let im=document.createElement("img");im.src=m[2];let t=document.createElement("span");t.textContent=m[1];b.append(im,t);b.onclick=()=>{S.model=m[0];renderModels();draw();dirty()};q("models").appendChild(b)})}
+const PCS_STOCK_URL="https://baby-sweetys-creations.babyysweetys.workers.dev/stock/protege-carnets";
+const PCS_QTY={};
+function renderModels(){
+ q("models").innerHTML="";
+ modelsData.forEach(m=>{
+  const b=document.createElement("button");b.type="button";b.dataset.code=m[0];
+  const qty=PCS_QTY[m[0]];
+  const out=(qty===0);
+  b.className="model"+(S.model===m[0]?" active":"")+(out?" stock-out":"");
+  b.disabled=out;
+  const im=document.createElement("img");im.src=m[2];
+  const t=document.createElement("span");t.textContent=m[1];
+  b.append(im,t);
+  b.onclick=()=>{if(out)return;S.model=m[0];renderModels();draw();dirty()};
+  q("models").appendChild(b);
+ });
+}
+async function refreshPCSStock(){
+ try{
+  const r=await fetch(PCS_STOCK_URL,{cache:"no-store"});
+  const d=await r.json();
+  if(!r.ok||!d.success||!Array.isArray(d.stock))return;
+  const codeByKey={
+   "pcs|Minky gris":"MG","pcs|Minky blanc":"MB","pcs|Minky bleu clair":"ML",
+   "pcs|Suricate rose poudré":"SR","pcs|Suricate terracotta":"ST"
+  };
+  d.stock.forEach(a=>{
+   const code=codeByKey[String(a.key||"").trim()];
+   if(code)PCS_QTY[code]=Math.max(0,Number(a.quantite)||0);
+  });
+  if(PCS_QTY[S.model]===0){
+   const first=modelsData.find(x=>PCS_QTY[x[0]]!==0);
+   if(first){S.model=first[0];S.x=0;S.y=0;draw();}
+  }
+  renderModels();
+ }catch(e){console.warn(e)}
+}
 function renderFlocks(){q("flocks").innerHTML="";flockData.forEach(f=>{let b=document.createElement("button");b.type="button";b.className="flock"+(S.flock===f[0]?" active":"");let c=document.createElement("span");c.className="chip "+f[3];if(f[4]){c.style.backgroundImage="url("+f[4]+")";c.style.backgroundSize="cover";c.style.backgroundPosition="center"}let t=document.createElement("span");t.textContent=f[1];b.append(c,t);b.onclick=()=>{S.flock=f[0];S.color=f[2];renderFlocks();draw();dirty()};q("flocks").appendChild(b)})}
 document.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{S.personal=b.dataset.p==="1";document.querySelectorAll("[data-p]").forEach(x=>x.classList.toggle("active",x===b));draw();dirty()});
 q("prenom").oninput=e=>{S.name=e.target.value;draw();dirty()};q("size").oninput=e=>{S.size=+e.target.value;draw();dirty()};q("rot").oninput=e=>{S.rot=+e.target.value;draw();dirty()};
 document.querySelectorAll(".move button").forEach(b=>b.onclick=()=>{S.x+=+b.dataset.x;S.y+=+b.dataset.y;draw();dirty()});
 let dragging=false,lx=0,ly=0;const ne=q("name");ne.onpointerdown=e=>{dragging=true;lx=e.clientX;ly=e.clientY;try{ne.setPointerCapture(e.pointerId)}catch(_){}};ne.onpointermove=e=>{if(!dragging)return;S.x+=e.clientX-lx;S.y+=e.clientY-ly;lx=e.clientX;ly=e.clientY;draw()};ne.onpointerup=()=>{dragging=false;dirty()};ne.onpointercancel=()=>dragging=false;
-q("generate").onclick=()=>{let nm=(S.name.trim()||"SANS");
-let scene=q("name").parentElement;
-let sceneRect=scene.getBoundingClientRect();
-let imgRect=q("product").getBoundingClientRect();
-let nameRect=q("name").getBoundingClientRect();
-let cx=nameRect.left+nameRect.width/2;
-let cy=nameRect.top+nameRect.height/2;
-let rx=((cx-imgRect.left)/Math.max(imgRect.width,1))*100;
-let ry=((cy-imgRect.top)/Math.max(imgRect.height,1))*100;
-let rw=(nameRect.width/Math.max(imgRect.width,1))*100;
-q("code").textContent="BS-PCS3-"+S.model+"-"+(S.personal?nm:"NP")+"-C"+S.flock+"-PX"+rx.toFixed(2)+"PY"+ry.toFixed(2)+"W"+rw.toFixed(2)+"R"+S.rot;q("codeRow").classList.add("show")};
+q("generate").onclick=async()=>{
+ let nm=(S.name.trim()||"SANS");
+ let imgRect=q("product").getBoundingClientRect();
+ let nameRect=q("name").getBoundingClientRect();
+ let cx=nameRect.left+nameRect.width/2,cy=nameRect.top+nameRect.height/2;
+ let rx=((cx-imgRect.left)/Math.max(imgRect.width,1))*100;
+ let ry=((cy-imgRect.top)/Math.max(imgRect.height,1))*100;
+ let rw=(nameRect.width/Math.max(imgRect.width,1))*100;
+ const payload={
+   modele:S.model,
+   modele_nom:({MG:"Minky gris",MB:"Minky blanc",ML:"Minky bleu clair",SR:"Suricate rose poudré",ST:"Suricate terracotta"})[S.model]||S.model,
+   personnalisation:!!S.personal,
+   prenom:S.personal?nm:"",
+   flocage:S.flock,
+   position_x:Number(rx.toFixed(2)),
+   position_y:Number(ry.toFixed(2)),
+   largeur:Number(rw.toFixed(2)),
+   rotation:Number(S.rot)||0
+ };
+ q("status").textContent="Création du code…";
+ q("cart").disabled=true;q("cart").classList.remove("ready");
+ try{
+   const r=await fetch("https://baby-sweetys-creations.babyysweetys.workers.dev/creation",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({product:"PCS",payload})});
+   const d=await r.json();
+   if(!r.ok||!d.success||!d.reference)throw new Error(d.error||"Impossible de créer la référence");
+   q("code").textContent=d.reference;
+   q("codeRow").classList.add("show");
+   q("status").textContent="♡ Code créé — copiez-le pour continuer.";
+ }catch(e){
+   q("status").textContent="Erreur : "+e.message;
+ }
+};
 q("copy").onclick=async()=>{let v=q("code").textContent;if(!v)return;try{await navigator.clipboard.writeText(v)}catch(_){let ta=document.createElement("textarea");ta.value=v;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove()}q("cart").disabled=false;q("cart").classList.add("ready");q("status").textContent="✓ Code copié — vous pouvez ajouter au panier."};
 q("cart").onclick=()=>{window.location.href="https://www.baby-sweetys.fr/product/24286696/protege-carnet-de-sante";};
-renderModels();renderFlocks();draw();
+renderModels();refreshPCSStock();renderFlocks();draw();
 })();
 </script></body></html>
