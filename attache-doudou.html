@@ -445,6 +445,20 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 </style>
 
+
+<style id="bs-no-sticky-mobile">
+/* Mobile : l'aperçu reste dans le flux de la page et ne masque plus le configurateur */
+@media (max-width: 767px) {
+  .sticky {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    z-index: auto !important;
+  }
+}
+</style>
+
 </head><body><div class='app'><div class='hero'><h1>Cr&#233;e ton attache-doudou</h1><p>Choisis tes deux clips, tes perles, ton pr&#233;nom et visualise ta cr&#233;ation en direct &#9825;</p></div>
 <!--
   FUTUR TUTORIEL VIDÉO
