@@ -319,7 +319,12 @@ async function verifierCommande(){
     }
   }else if(d.clip){
     txt+=`\n\nClip ${d.clip.taille} mm : ${d.clip.creation}\nStock : ${d.clip.stock?.quantite ?? 'introuvable'}`;
-    for(const m of (d.motifs||[])) txt+=`\n\nMotif : ${m.creation}\nStock : ${m.stock?.quantite ?? 'introuvable'}`;
+  }
+  if(Array.isArray(d.motifs)){
+    for(const m of d.motifs){
+      txt+=`\n\nMotif : ${m.creation}\nStock : ${m.stock?.quantite ?? 'introuvable'}`;
+      if(m.besoin!==undefined) txt+=` (besoin : ${m.besoin})`;
+    }
   }
   if(d.deja_traitee) txt+='\n\n⚠️ Déjà traitée';
   commandePreview.textContent=txt;
