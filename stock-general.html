@@ -320,6 +320,17 @@ async function verifierCommande(){
   }else if(d.clip){
     txt+=`\n\nClip ${d.clip.taille} mm : ${d.clip.creation}\nStock : ${d.clip.stock?.quantite ?? 'introuvable'}`;
   }
+  /* Clips : règle générale pour tous les configurateurs.
+     Si le Worker renvoie "clips", ils sont toujours affichés ici,
+     indépendamment du type de produit. */
+  if(Array.isArray(d.clips)){
+    for(const c of d.clips){
+      txt+=`\n\nClip${c.taille ? ' '+c.taille+' mm' : ''} : ${c.creation || c.nom || 'clip inconnu'}`;
+      txt+=`\nStock : ${c.stock?.quantite ?? 'introuvable'}`;
+      if(c.besoin!==undefined) txt+=` (besoin : ${c.besoin})`;
+    }
+  }
+
   if(Array.isArray(d.motifs)){
     for(const m of d.motifs){
       txt+=`\n\nMotif : ${m.creation}\nStock : ${m.stock?.quantite ?? 'introuvable'}`;
