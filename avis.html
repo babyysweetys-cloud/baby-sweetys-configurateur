@@ -77,4 +77,29 @@
 <section class="stats"><div class="stat"><strong class="stars">★★★★★</strong><span>Les avis de nos clients</span></div><div class="stat"><strong>2 302</strong><span>commandes réalisées<br>depuis 2023</span></div><div class="stat"><strong>♡</strong><span>Des créations<br>personnalisées</span></div><div class="stat"><strong>♡</strong><span>Merci pour<br>votre confiance</span></div></section>
 <div class="give"><button id="open">♡ Donner mon avis</button></div><section class="section"><h2>Les avis de nos clientes ♡</h2><div class="cards"><article class="card"><div class="photo">Photo de la création</div><div class="ct"><div class="stars">★★★★★</div><div class="who">Marion</div><div class="prod">Doudou + plaid</div><p class="txt">« Trop beau ! Mon fils l'adore, merci beaucoup ♡ »</p><div class="date">Exemple de présentation</div></div></article><article class="card"><div class="photo">Photo de la création</div><div class="ct"><div class="stars">★★★★★</div><div class="who">Élodie</div><div class="prod">Anneau de dentition</div><p class="txt">« Je suis conquise, la qualité est incroyable ! »</p><div class="date">Exemple de présentation</div></div></article><article class="card"><div class="photo">Photo de la création</div><div class="ct"><div class="stars">★★★★★</div><div class="who">Sarah</div><div class="prod">Porte-clé personnalisé</div><p class="txt">« Parfait, comme toujours ! »</p><div class="date">Exemple de présentation</div></div></article><article class="card"><div class="photo">Photo de la création</div><div class="ct"><div class="stars">★★★★★</div><div class="who">Clara</div><div class="prod">Attache-tétine</div><p class="txt">« Très joli, fidèle à mes attentes. »</p><div class="date">Exemple de présentation</div></div></article></div></section></main>
 <div class="modal" id="modal"><form class="form" id="form"><button type="button" class="close" id="close">×</button><h3>Donner mon avis ♡</h3><label>Votre prénom</label><input required placeholder="Ex. Camille"><label>Votre création</label><select required><option value="">Choisissez votre création</option><option>Attache-tétine</option><option>Anneau de dentition</option><option>Attache-doudou</option><option>Porte-clé</option><option>Collier allaitement / portage</option><option>Doudou personnalisé</option><option>Protège carnet de santé</option><option>Doudou + Plaid</option><option>Boule de Noël</option><option>Autre création</option></select><label>Votre note</label><div class="pick" id="pick"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div><label>Votre avis</label><textarea required placeholder="Partagez votre expérience…"></textarea><label>Une photo (facultatif)</label><div class="upload">♡ Ajouter une photo</div><button class="submit" type="submit">Publier mon avis ♡</button></form></div>
-<script>const modal=document.getElementById('modal');document.getElementById('open').addEventListener('click',()=>modal.classList.add('open'));document.getElementById('close').addEventListener('click',()=>modal.classList.remove('open'));const stars=[...document.querySelectorAll('#pick span')];stars.forEach((s,i)=>s.addEventListener('click',()=>stars.forEach((x,j)=>x.classList.toggle('on',j<=i))));document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();alert("Maquette : le système d'avis sera connecté après validation du visuel.");});</script></body></html>
+<script>const modal=document.getElementById('modal');document.getElementById('open').addEventListener('click',()=>modal.classList.add('open'));document.getElementById('close').addEventListener('click',()=>modal.classList.remove('open'));const stars=[...document.querySelectorAll('#pick span')];stars.forEach((s,i)=>s.addEventListener('click',()=>stars.forEach((x,j)=>x.classList.toggle('on',j<=i))));document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();alert("Maquette : le système d'avis sera connecté après validation du visuel.");});</script>
+<script id="webador-auto-height">
+(function () {
+  function sendHeight() {
+    var h = Math.max(
+      document.documentElement.scrollHeight,
+      document.body ? document.body.scrollHeight : 0
+    );
+    window.parent.postMessage({type:"baby-sweetys-avis-height", height:h}, "*");
+  }
+  window.addEventListener("load", function () {
+    sendHeight();
+    setTimeout(sendHeight, 200);
+    setTimeout(sendHeight, 800);
+  });
+  window.addEventListener("resize", sendHeight);
+  if ("ResizeObserver" in window) {
+    new ResizeObserver(sendHeight).observe(document.documentElement);
+  }
+  new MutationObserver(sendHeight).observe(document.documentElement, {
+    childList:true, subtree:true, attributes:true
+  });
+})();
+</script>
+
+</body></html>
