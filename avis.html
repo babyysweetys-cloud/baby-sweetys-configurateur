@@ -91,4 +91,59 @@
     console.warn("Compteur Baby Sweety's indisponible",e);
   }
 })();
-</script></body></html>
+</script>
+<script id="babySweetysIframeHeight">
+(function () {
+  function envoyerHauteur() {
+    const body = document.body;
+    const doc = document.documentElement;
+    const height = Math.max(
+      body ? body.scrollHeight : 0,
+      body ? body.offsetHeight : 0,
+      doc ? doc.clientHeight : 0,
+      doc ? doc.scrollHeight : 0,
+      doc ? doc.offsetHeight : 0
+    );
+
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage(
+        {
+          type: "baby-sweetys-avis-height",
+          height: height
+        },
+        "*"
+      );
+    }
+  }
+
+  window.addEventListener("load", function () {
+    envoyerHauteur();
+    setTimeout(envoyerHauteur, 150);
+    setTimeout(envoyerHauteur, 500);
+    setTimeout(envoyerHauteur, 1200);
+  });
+
+  window.addEventListener("resize", envoyerHauteur);
+
+  if ("ResizeObserver" in window) {
+    const observer = new ResizeObserver(function () {
+      envoyerHauteur();
+    });
+    observer.observe(document.documentElement);
+    if (document.body) observer.observe(document.body);
+  }
+
+  if ("MutationObserver" in window && document.body) {
+    const mutations = new MutationObserver(function () {
+      envoyerHauteur();
+    });
+    mutations.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true
+    });
+  }
+})();
+</script>
+
+</body></html>
