@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gestion des avis – Baby Sweety's</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#fff7f4;color:#5d4545;font-family:Arial,sans-serif}
+.wrap{max-width:850px;margin:auto;padding:18px}
+header{background:linear-gradient(135deg,#ffede6,#f7ded7);padding:24px 18px;border-radius:20px;text-align:center;margin-bottom:18px}
+h1{margin:0 0 7px;font-size:25px;color:#8f5e66}
+header p{margin:0;color:#8c7470;font-size:14px}
+.login,.panel{background:#fff;border:1px solid #eadbd6;border-radius:18px;padding:18px;box-shadow:0 8px 24px rgba(100,70,70,.07)}
+label{display:block;font-weight:700;margin:0 0 7px}
+input{width:100%;padding:13px;border:1px solid #dfd0cb;border-radius:11px;font-size:16px;margin-bottom:12px}
+button{border:0;border-radius:11px;padding:13px 16px;font-size:15px;font-weight:700;cursor:pointer}
+.primary{width:100%;background:#cf8996;color:white}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.count{font-weight:700;color:#9d6570}
+.refresh{background:#f4e2df;color:#805b60}
+.card{background:#fff;border:1px solid #eadbd6;border-radius:15px;padding:15px;margin:12px 0;box-shadow:0 5px 14px rgba(100,70,70,.05)}
+.stars{color:#d5a04f;font-size:19px;letter-spacing:1px}
+.who{font-size:19px;font-weight:800;margin-top:7px}
+.prod,.date{font-size:12px;color:#9b8580;margin-top:3px}
+.txt{font-size:15px;line-height:1.5;margin:12px 0}
+.delete{background:#fff0f0;color:#b04444;border:1px solid #e7bcbc;width:100%}
+.empty{text-align:center;padding:30px 10px;color:#9b8580}
+.msg{padding:11px;border-radius:10px;margin-bottom:12px;display:none}
+.error{display:block;background:#fff0f0;color:#9e3f3f}
+.ok{display:block;background:#eef9f0;color:#397a48}
+.hidden{display:none!important}
+.note{font-size:12px;color:#9b8580;margin-top:10px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>Gestion des avis ♡</h1>
+<p>Baby Sweety's – espace privé</p>
+</header>
+
+<section class="login" id="login">
+<label for="secret">Mot de passe administrateur</label>
+<input id="secret" type="password" autocomplete="current-password" placeholder="Votre mot de passe">
+<button class="primary" id="connect">Afficher les avis</button>
+<div class="note">Le mot de passe reste uniquement dans cette page pendant son ouverture.</div>
+</section>
+
+<section class="panel hidden" id="panel">
+<div class="topbar">
+<div class="count" id="count">Avis du site</div>
+<button class="refresh" id="refresh">↻ Actualiser</button>
+</div>
+<div id="message" class="msg"></div>
+<div id="list"><div class="empty">Chargement…</div></div>
+</section>
+</div>
+
+<script>
+const API="https://baby-sweetys-avis.babyysweetys.workers.dev";
+let adminSecret="";
+
+const $=id=>document.getElementById(id);
+
+function esc(v){
+  return String(v??"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+function dateFr(v){
+  if(!v)return "";
+  const d=new Date(String(v).replace(" ","T")+"Z");
+  return Number.isNaN(d.getTime())?"":d.toLocaleDateString("fr-FR");
+}
+function stars(n){
+  n=Math.max(1,Math.min(5,Number(n)||5));
+  return "★".repeat(n)+"☆".repeat(5-n);
+}
+function message(txt,type="ok"){
+  $("message").className="msg "+type;
+  $("message").textContent=txt;
+  setTimeout(()=>{$("message").className="msg";$("message").textContent=""},3500);
+}
+async function charger(){
+  $("list").innerHTML='<div class="empty">Chargement…</div>';
+  try{
+    const r=await fetch(API+"/avis",{cache:"no-store"});
+    const data=await r.json();
+    if(!r.ok||!data.ok)throw new Error();
+    const avis=Array.isArray(data.avis)?data.avis:[];
+    $("count").textContent=avis.length+" avis publié"+(avis.length>1?"s":"")+" sur le site";
+    if(!avis.length){
+      $("list").innerHTML='<div class="empty">Aucun nouvel avis déposé sur le site.</div>';
+      return;
+    }
+    $("list").innerHTML=avis.map(a=>`
+      <article class="card">
+        <div class="stars">${stars(a.note)}</div>
+        <div class="who">${esc(a.prenom)}</div>
+        <div class="prod">${esc(a.produit)}</div>
+        <p class="txt">« ${esc(a.commentaire)} »</p>
+        <div class="date">${dateFr(a.date_creation)}</div>
+        <button class="delete" data-id="${Number(a.id)}">Supprimer cet avis</button>
+      </article>`).join("");
+  }catch(e){
+    $("list").innerHTML='<div class="empty">Impossible de charger les avis.</div>';
+  }
+}
+$("connect").onclick=async()=>{
+  adminSecret=$("secret").value.trim();
+  if(!adminSecret){alert("Entre ton mot de passe administrateur.");return}
+  $("login").classList.add("hidden");
+  $("panel").classList.remove("hidden");
+  await charger();
+};
+$("refresh").onclick=charger;
+
+$("list").addEventListener("click",async e=>{
+  const b=e.target.closest(".delete");
+  if(!b)return;
+  const id=Number(b.dataset.id);
+  if(!confirm("Supprimer définitivement cet avis ?"))return;
+  b.disabled=true;
+  b.textContent="Suppression…";
+  try{
+    const r=await fetch(API+"/admin/avis/"+id,{
+      method:"DELETE",
+      headers:{"X-Admin-Secret":adminSecret}
+    });
+    if(r.status===401){
+      message("Mot de passe administrateur incorrect.","error");
+      b.disabled=false;b.textContent="Supprimer cet avis";
+      return;
+    }
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok||!data.ok)throw new Error();
+    message("Avis supprimé.");
+    await charger();
+  }catch(err){
+    message("La suppression a échoué.","error");
+    b.disabled=false;b.textContent="Supprimer cet avis";
+  }
+});
+</script>
+</body>
+</html>
